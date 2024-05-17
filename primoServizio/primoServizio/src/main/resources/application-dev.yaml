@@ -1,0 +1,8 @@
+spring:
+  config:
+    activate:
+      on-profile: "dev"
+
+logging:
+  file:
+    name: "servizio.log"

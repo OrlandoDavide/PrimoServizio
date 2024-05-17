@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: primoServizio
+  profiles:
+    active: "local"
+  liquibase:
+    enabled: false
+
+logging:
+  file:
+    name: "servizio.log"

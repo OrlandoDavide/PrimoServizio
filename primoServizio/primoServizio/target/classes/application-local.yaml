@@ -1,0 +1,40 @@
+#spring:
+#  config:
+#    activate:
+#      on-profile: "local"
+#  liquibase:
+#    enabled: false
+#  datasource:
+#    driver-class-name: oracle.jdbc.driver.OracleDriver
+#    username: strutture
+#    password: root
+#    url: jdbc:oracle:thin:@localhost:1521/XEPDB1
+
+spring:
+  config:
+    activate:
+      on-profile: "local"
+  liquibase:
+    enabled: false
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521/XEPDB1
+    username: strutture
+    password: root
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+logging:
+  file:
+    name: "servizio.log"
+
+jwt:
+  expiration: 3600000
+  secret-key: "davide-orlandoProva987456321primoServizio741258963753159"
+
