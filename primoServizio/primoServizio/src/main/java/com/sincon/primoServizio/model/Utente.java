@@ -15,10 +15,10 @@ public class Utente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "EMAIL", nullable = false)
+    @Column(name = "EMAIL", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "PASSWORD", unique = true, nullable = false)
+    @Column(name = "PASSWORD", nullable = false)
     private String password;
 
     @Column(name = "ATTIVO", columnDefinition = "boolean default true") //non funziona per tutti i DB
