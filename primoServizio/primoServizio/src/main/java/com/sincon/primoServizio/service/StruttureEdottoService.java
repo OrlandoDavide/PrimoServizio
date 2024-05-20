@@ -107,6 +107,7 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     // Aggiorna EDOTTO
@@ -123,6 +124,7 @@ public class StruttureEdottoService {
 //                    OrganigrammaStruttura asl = organigrammaRepository.findByCodiceEdotto()
                 }
             }
+            streamReader.close();
         }
     }
 
@@ -191,6 +193,7 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati ISTITUTO PENITENZIARIO
@@ -205,6 +208,7 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati OSPEDALE DI COMUNITA'
@@ -219,6 +223,7 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati POSTAZIONE EMERGENZA SANITARIA
@@ -236,6 +241,7 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati STRUTTURA SPECIALISTICA
@@ -251,6 +257,7 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati PUNTO DI CONTINUITA' ASSISTENZIALE
@@ -268,6 +275,7 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati REPARTO OSPEDALIERO
@@ -289,9 +297,11 @@ public class StruttureEdottoService {
                         break;
                     case "progReparto" :
                         struttura.setProgReparto(Integer.parseInt(streamReader.getElementText().trim()));
+                        break;
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati SEDE MEDICINA DEI SERVIZI
@@ -310,6 +320,7 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati SERVIZIO TERRITORIALE DIPENDENZA PATOLOGICA
@@ -325,6 +336,7 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati SERVIZIO TERRITORIALE PREVENZIONE
@@ -340,6 +352,7 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati SERVIZIO TERRITORIALE SALUTE MENTALE
@@ -355,6 +368,7 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati SERVIZIO OSPEDALIERO
@@ -373,13 +387,16 @@ public class StruttureEdottoService {
                         struttura.setProgServizio(Integer.parseInt(streamReader.getElementText().trim()));
                         break;
                     case "progStabilimento" :
-                        struttura.setProgStabilimento(Integer.parseInt(streamReader.getElementText().trim()));
+                        String progStabilimento = streamReader.getElementText().trim();
+                        struttura.setProgStabilimento(Integer.parseInt(progStabilimento));
                         break;
                     case "codStrutturaIstitutoDiRicovero" :
-
+                        String codStruttIstitutoDaRicovero = streamReader.getElementText();
+                        break;
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati RESIDENZA ASSISTENZIALE
@@ -403,6 +420,7 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati STABILIMENTO OSPEDALIERO
@@ -420,6 +438,7 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati STRUTTURA RIABILITATIVA PSICHIATRICA
@@ -443,6 +462,7 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     // Set dati STRUTTURA CURE TERMALI
@@ -458,9 +478,14 @@ public class StruttureEdottoService {
                 }
             }
         }
+        streamReader.close();
     }
 
     public long findAslByCodice(String codNSIS) {
         return orgRepositoryImpl.findAslByCodiceNSIS(codNSIS).getId();
+    }
+
+    public long getStrutturaByCodiceEdottoIstitutoAndStabilimento(int codiceEdottoIstituto, int stabilimento) {
+        return orgRepositoryImpl.findOneByCodiceEdottoGrampaAndStabilimento(codiceEdottoIstituto, stabilimento);
     }
 }
