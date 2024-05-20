@@ -11,7 +11,7 @@ import lombok.Data;
 public class Dizionario {
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "ID_DIZIONARIO")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

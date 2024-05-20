@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -17,11 +18,13 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
 
     private static final long serialVersionUID = 1480341225L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QOrganigrammaStruttura organigrammaStruttura = new QOrganigrammaStruttura("organigrammaStruttura");
 
     public final BooleanPath abilitato = createBoolean("abilitato");
 
-    public final NumberPath<Integer> asl = createNumber("asl", Integer.class);
+    public final QOrganigrammaStruttura asl;
 
     public final NumberPath<Integer> categoria = createNumber("categoria", Integer.class);
 
@@ -53,7 +56,7 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
 
     public final StringPath cognomeTitolare = createString("cognomeTitolare");
 
-    public final StringPath comune = createString("comune");
+    public final QComune comune;
 
     public final NumberPath<Integer> createdBy = createNumber("createdBy", Integer.class);
 
@@ -77,7 +80,7 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
 
     public final StringPath denominazione = createString("denominazione");
 
-    public final NumberPath<Integer> distretto = createNumber("distretto", Integer.class);
+    public final QOrganigrammaStruttura distretto;
 
     public final StringPath emailTitolare = createString("emailTitolare");
 
@@ -95,7 +98,7 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
 
     public final StringPath nomeTitolare = createString("nomeTitolare");
 
-    public final NumberPath<Integer> parent = createNumber("parent", Integer.class);
+    public final QOrganigrammaStruttura parent;
 
     public final NumberPath<Integer> progCO = createNumber("progCO", Integer.class);
 
@@ -121,20 +124,33 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
 
     public final NumberPath<Integer> tipologia = createNumber("tipologia", Integer.class);
 
-    public final NumberPath<Integer> tipologiaEdotto = createNumber("tipologiaEdotto", Integer.class);
+    public final QDizionario tipologiaEdotto;
 
     public final NumberPath<Integer> tipologiaGiuridica = createNumber("tipologiaGiuridica", Integer.class);
 
     public QOrganigrammaStruttura(String variable) {
-        super(OrganigrammaStruttura.class, forVariable(variable));
+        this(OrganigrammaStruttura.class, forVariable(variable), INITS);
     }
 
     public QOrganigrammaStruttura(Path<? extends OrganigrammaStruttura> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QOrganigrammaStruttura(PathMetadata metadata) {
-        super(OrganigrammaStruttura.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QOrganigrammaStruttura(PathMetadata metadata, PathInits inits) {
+        this(OrganigrammaStruttura.class, metadata, inits);
+    }
+
+    public QOrganigrammaStruttura(Class<? extends OrganigrammaStruttura> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.asl = inits.isInitialized("asl") ? new QOrganigrammaStruttura(forProperty("asl"), inits.get("asl")) : null;
+        this.comune = inits.isInitialized("comune") ? new QComune(forProperty("comune")) : null;
+        this.distretto = inits.isInitialized("distretto") ? new QOrganigrammaStruttura(forProperty("distretto"), inits.get("distretto")) : null;
+        this.parent = inits.isInitialized("parent") ? new QOrganigrammaStruttura(forProperty("parent"), inits.get("parent")) : null;
+        this.tipologiaEdotto = inits.isInitialized("tipologiaEdotto") ? new QDizionario(forProperty("tipologiaEdotto")) : null;
     }
 
 }

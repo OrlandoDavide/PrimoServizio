@@ -13,6 +13,8 @@ import java.time.LocalDate;
 public class OrganigrammaStruttura {
 
     @Id
+    @Column(name = "ID_STRUTTURA")
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "DENOMINAZIONE")
@@ -21,7 +23,8 @@ public class OrganigrammaStruttura {
     @Column(name = "CODICE")
     private String codice;
 
-    @Column(name = "ID_ASL")
+    @ManyToOne(targetEntity = OrganigrammaStruttura.class)
+    @JoinColumn(name = "ID_ASL", referencedColumnName = "ID_STRUTTURA")
     private int asl;
 
     @Column(name = "NOME_TITOLARE")
@@ -48,7 +51,8 @@ public class OrganigrammaStruttura {
     @Column(name = "ID_TIPOLOGIA")
     private int tipologia;
 
-    @Column(name = "ID_PARENT")
+    @ManyToOne(targetEntity = OrganigrammaStruttura.class)
+    @JoinColumn(name = "ID_PARENT", referencedColumnName = "ID_STRUTTURA")
     private int parent;
 
     @Column(name = "COD_STRUTTURA_ORIGINALE")
@@ -96,7 +100,8 @@ public class OrganigrammaStruttura {
     @Column(name = "COD_EDOTTO")
     private int codiceEdotto;
 
-    @Column(name = "COD_ISTAT")
+    @ManyToOne(targetEntity = Comune.class)
+    @JoinColumn(name = "COD_ISTAT", referencedColumnName = "ISTAT")
     private String comune;
 
     @Column(name = "DATA_APERTURA")
@@ -111,10 +116,12 @@ public class OrganigrammaStruttura {
     @Column(name = "ID_TIPOLOGIA_GIURIDICA")
     private int tipologiaGiuridica;
 
-    @Column(name = "ID_TIPOLOGIA_EDOTTO")
+    @ManyToOne(targetEntity = Dizionario.class)
+    @JoinColumn(name = "ID_TIPOLOGIA_EDOTTO", referencedColumnName = "ID_DIZIONARIO")
     private int tipologiaEdotto;
 
-    @Column(name = "ID_DISTRETTO")
+    @ManyToOne(targetEntity = OrganigrammaStruttura.class)
+    @JoinColumn(name = "ID_DISTRETTO", referencedColumnName = "ID_STRUTTURA")
     private int distretto;
 
     @Column(name = "PROG_DISTRETTO")
