@@ -55,7 +55,8 @@ public class OrganigrammaStruttura {
     @JoinColumn(name = "ID_PARENT", referencedColumnName = "ID_STRUTTURA")
     private int parent;
 
-    @Column(name = "COD_STRUTTURA_ORIGINALE")
+    @ManyToOne(targetEntity = OrganigrammaStruttura.class)
+    @JoinColumn(name = "COD_STRUTTURA_ORIGINALE", referencedColumnName = "ID_STRUTTURA")
     private int strutturaOriginale;
 
     @Column(name = "ABILITATO")

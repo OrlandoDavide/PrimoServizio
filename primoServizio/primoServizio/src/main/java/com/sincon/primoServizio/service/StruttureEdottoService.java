@@ -460,5 +460,7 @@ public class StruttureEdottoService {
         }
     }
 
-    private Long getStrutturaByCodiceEdottoAndStabilimento()
+    public long findAslByCodice(String codNSIS) {
+        return orgRepositoryImpl.findAslByCodiceNSIS(codNSIS).getId();
+    }
 }

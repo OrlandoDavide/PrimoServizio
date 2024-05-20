@@ -118,7 +118,7 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
 
     public final BooleanPath screening = createBoolean("screening");
 
-    public final NumberPath<Integer> strutturaOriginale = createNumber("strutturaOriginale", Integer.class);
+    public final QOrganigrammaStruttura strutturaOriginale;
 
     public final StringPath telefonoTitolare = createString("telefonoTitolare");
 
@@ -150,6 +150,7 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
         this.comune = inits.isInitialized("comune") ? new QComune(forProperty("comune")) : null;
         this.distretto = inits.isInitialized("distretto") ? new QOrganigrammaStruttura(forProperty("distretto"), inits.get("distretto")) : null;
         this.parent = inits.isInitialized("parent") ? new QOrganigrammaStruttura(forProperty("parent"), inits.get("parent")) : null;
+        this.strutturaOriginale = inits.isInitialized("strutturaOriginale") ? new QOrganigrammaStruttura(forProperty("strutturaOriginale"), inits.get("strutturaOriginale")) : null;
         this.tipologiaEdotto = inits.isInitialized("tipologiaEdotto") ? new QDizionario(forProperty("tipologiaEdotto")) : null;
     }
 
