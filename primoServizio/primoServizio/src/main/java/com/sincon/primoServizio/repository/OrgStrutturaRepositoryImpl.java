@@ -92,7 +92,7 @@ public class OrgStrutturaRepositoryImpl {
                         .from(qOrganigrammaStruttura)
                         .where(
                                 qOrganigrammaStruttura.codiceEdotto.eq(codiceEdotto)
-                                .and(qOrganigrammaStruttura.tipologiaEdotto.eq(tipologiaEdotto))
+                                .and(qOrganigrammaStruttura.tipologiaEdotto.id.eq(tipologiaEdotto))
                         )
                         .fetchOne()
         );
