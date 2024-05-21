@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-05-20T17:36:17+0200",
+    date = "2024-05-21T12:50:43+0200",
     comments = "version: 1.6.0.Beta1, compiler: javac, environment: Java 17.0.10 (Oracle Corporation)"
 )
 @Component
@@ -21,7 +21,7 @@ public class EntityMapper$DizionarioMapperImpl implements EntityMapper.Dizionari
 
         DizionarioDto dizionarioDto = new DizionarioDto();
 
-        dizionarioDto.setId( dizionario.getId() );
+        dizionarioDto.setId( (long) dizionario.getId() );
         dizionarioDto.setDenominazione( dizionario.getDenominazione() );
         dizionarioDto.setCategoria( dizionario.getCategoria() );
         dizionarioDto.setCodifica( dizionario.getCodifica() );
@@ -40,7 +40,9 @@ public class EntityMapper$DizionarioMapperImpl implements EntityMapper.Dizionari
 
         Dizionario dizionario = new Dizionario();
 
-        dizionario.setId( dizionarioDto.getId() );
+        if ( dizionarioDto.getId() != null ) {
+            dizionario.setId( dizionarioDto.getId().intValue() );
+        }
         dizionario.setDenominazione( dizionarioDto.getDenominazione() );
         dizionario.setCategoria( dizionarioDto.getCategoria() );
         dizionario.setCodifica( dizionarioDto.getCodifica() );

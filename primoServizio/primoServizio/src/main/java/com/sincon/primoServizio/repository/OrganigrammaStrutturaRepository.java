@@ -11,8 +11,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrganigrammaStrutturaRepository extends JpaRepository<OrganigrammaStruttura, Long>, QuerydslPredicateExecutor<QOrganigrammaStruttura> {
-
-    @Query(value = "SELECT * FROM organigramma_struttura WHERE COD_EDOTTO =?1", nativeQuery = true)
-    public OrganigrammaStruttura findByCodiceEdotto(@Param("COD_EDOTTO") String codiceEdotto);
-
 }

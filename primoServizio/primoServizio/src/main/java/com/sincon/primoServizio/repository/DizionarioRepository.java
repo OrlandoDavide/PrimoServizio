@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DizionarioRepository extends JpaRepository<Dizionario, Long>, QuerydslPredicateExecutor<Dizionario> {
 
+    Dizionario findByCategoriaAndCodifica(String categoria, String codifica);
 }

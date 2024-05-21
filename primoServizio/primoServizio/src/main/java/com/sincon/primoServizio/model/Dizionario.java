@@ -13,7 +13,7 @@ public class Dizionario {
     @Id
     @Column(name = "ID_DIZIONARIO")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(name = "DENOMINAZIONE")
     private String denominazione;

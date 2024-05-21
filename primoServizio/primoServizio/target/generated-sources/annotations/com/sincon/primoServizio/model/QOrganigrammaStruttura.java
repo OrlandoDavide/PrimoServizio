@@ -84,7 +84,7 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
 
     public final StringPath emailTitolare = createString("emailTitolare");
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+    public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
     public final BooleanPath isAsl = createBoolean("isAsl");
 

@@ -1,9 +1,10 @@
 package com.sincon.primoServizio.service;
 
+import com.sincon.primoServizio.model.Dizionario;
 import com.sincon.primoServizio.model.OrganigrammaStruttura;
 import com.sincon.primoServizio.model.Utente;
 import com.sincon.primoServizio.repository.ComuneRepository;
-import com.sincon.primoServizio.repository.DizionarioRepository;
+import com.sincon.primoServizio.repository.DizionarioRepositoryImpl;
 import com.sincon.primoServizio.repository.OrgStrutturaRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,6 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -24,23 +24,23 @@ public class StruttureEdottoService {
 
     private final OrgStrutturaRepositoryImpl orgRepositoryImpl;
     private final ComuneRepository comuneRepository;
-    private final DizionarioRepository dizionarioRepository;
+    private final DizionarioRepositoryImpl dizionarioRepImpl;
     private Utente utenteInSessione;
 
 
     @Autowired
     public StruttureEdottoService(OrgStrutturaRepositoryImpl orgRepositoryImpl,
                                   ComuneRepository comuneRepository,
-                                  DizionarioRepository dizionarioRepository )
+                                  DizionarioRepositoryImpl dizionarioRepImpl)
     {
         this.orgRepositoryImpl = orgRepositoryImpl;
         this.comuneRepository = comuneRepository;
-        this.dizionarioRepository = dizionarioRepository;
+        this.dizionarioRepImpl = dizionarioRepImpl;
     }
 
 
-    // Cast da String a LocalDate, format: "yyyy-MM-dd"
-    public LocalDate parseStringToLocalDate(String stringData) throws ParseException {
+    // Cast da String a LocalDate, formato: "yyyy-MM-dd"
+    public LocalDate parseStringToLocalDate(String stringData) {
          DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         return LocalDate.parse(stringData, formatoData);
@@ -48,12 +48,12 @@ public class StruttureEdottoService {
 
     // Verifica se l'indirizzo IP è "locale"
     public boolean isLocalAddress(String indirizzoIP) {
-        //todo controlla se indirizzo è locale
+        //todo controlla se indirizzo è locale ??forse
         return false;
     }
 
     // Set dati GENERALI STRUTTURA
-    public void setDatiGeneraliStruttura(OrganigrammaStruttura struttura, XMLStreamReader datiGeneraliStruttura) throws XMLStreamException, ParseException {
+    public void setDatiGeneraliStruttura(OrganigrammaStruttura struttura, XMLStreamReader datiGeneraliStruttura) throws XMLStreamException {
         while (datiGeneraliStruttura.hasNext()) {
             String tag = datiGeneraliStruttura.getLocalName();
             switch (tag) {
@@ -93,19 +93,38 @@ public class StruttureEdottoService {
 
     // Set ASL
     @Transactional
-     public void setASL(OrganigrammaStruttura asl, XMLStreamReader streamReader) throws XMLStreamException, ParseException {
+     public void setASL(OrganigrammaStruttura asl, XMLStreamReader streamReader) throws XMLStreamException {
         setAudit(asl);
         setDatiGeneraliStruttura(asl, streamReader);
+        String codifica = null;
+
         while (streamReader.hasNext()) {
             int evento = streamReader.next();
+
             if(evento == XMLStreamReader.START_ELEMENT) {
                 String tag = streamReader.getLocalName();
 
                 switch (tag) {
-                    case "datiGeneraliStruttura":
-
+                    case "codNazionale":
+                        asl.setCodiceNSIS(streamReader.getElementText());
+                        break;
+                    case "email" :
+                        asl.setEmailTitolare(streamReader.getElementText());
+                        break;
+                    case "telefono" :
+                        asl.setTelefonoTitolare(streamReader.getElementText());
+                        break;
+                    case "partitaIVA" :
+                        asl.setCodice(streamReader.getElementText());
+                        break;
+                    case "codTipologiaGiuridica" :
+                        codifica = streamReader.getElementText();
+                        break;
                 }
             }
+        }
+        if(codifica != null) {
+            asl.setTipologiaGiuridica(getDizionarioByCodifica(codifica, "TIPO_GIURIDICA").getId());
         }
         streamReader.close();
     }
@@ -120,8 +139,6 @@ public class StruttureEdottoService {
             while(streamReader.hasNext()) {
                 int tag = streamReader.next();
                 if(tag == XMLStreamReader.START_ELEMENT && streamReader.getLocalName().equals("datiStruttutaSanitaria")) {
-//                    String codiceEdotto = streamReader.getAttributeLocalName()
-//                    OrganigrammaStruttura asl = organigrammaRepository.findByCodiceEdotto()
                 }
             }
             streamReader.close();
@@ -130,7 +147,7 @@ public class StruttureEdottoService {
 
     // Set AUDIT
     public void setAudit(OrganigrammaStruttura struttura) {
-        if(struttura.getId() == null || struttura.getId() < 1) {
+        if(struttura.getId() < 1) {
             struttura.setCreatedDate(LocalDate.now());
             struttura.setCreatedBy(Math.toIntExact(utenteInSessione.getId()));
             //todo struttura.setCreatedWith(); boh?
@@ -142,9 +159,10 @@ public class StruttureEdottoService {
     }
 
     // Set DISTRETTO SOCIO-SANITARIO
-    public void setDistretto(OrganigrammaStruttura distretto, XMLStreamReader streamReader) throws XMLStreamException, ParseException {
+    public void setDistretto(OrganigrammaStruttura distretto, XMLStreamReader streamReader) throws XMLStreamException {
         setAudit(distretto);
         setDatiGeneraliStruttura(distretto, streamReader);
+        String codifica = null;
 
         while (streamReader.hasNext()) {
             int evento = streamReader.next();
@@ -161,7 +179,7 @@ public class StruttureEdottoService {
                        ));
                        break;
                     case "codTipologiaGiuridica" :
-                        //todo;
+                        codifica = streamReader.getElementText();
                         break;
                     case "email" :
                         distretto.setEmailTitolare(streamReader.getElementText().trim());
@@ -170,28 +188,40 @@ public class StruttureEdottoService {
                         distretto.setTelefonoTitolare(streamReader.getElementText().trim());
                         break;
                     case "codNazionaleASLAppartenenzaTerritoriale" :
-                        distretto.setAsl(Integer.parseInt(orgRepositoryImpl.findAslByCodiceNSIS(streamReader.getElementText())));
+                        distretto.setAsl(findAslByCodice(streamReader.getElementText().trim()));
                         distretto.setParent(distretto.getAsl());
                         break;
                 }
             }
+        }
+        if(codifica != null) {
+            distretto.setTipologiaGiuridica(getDizionarioByCodifica(codifica, "TIPO_GIURIDICA").getId());
         }
         streamReader.close();
     }
 
     // Set dati FARMACIA
     public void setDatiFarmacia(OrganigrammaStruttura struttura, XMLStreamReader streamReader) throws XMLStreamException {
-        //todo struttura.setDistretto();
+        Integer progDistretto = null;
 
         while (streamReader.hasNext()) {
             int evento = streamReader.next();
 
             if(evento == XMLStreamReader.START_ELEMENT) {
                 String tag = streamReader.getLocalName();
-                if (tag.equals("codProvinciale")) {
-                    struttura.setCodProvinciale(streamReader.getElementText());
+
+                switch (tag) {
+                    case "codProvinciale" :
+                        struttura.setCodProvinciale(streamReader.getElementText());
+                        break;
+                    case "progDistretto" :
+                        progDistretto = Integer.parseInt(streamReader.getElementText());
+                        break;
                 }
             }
+        }
+        if(progDistretto != null) {
+            struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
         }
         streamReader.close();
     }
@@ -228,7 +258,7 @@ public class StruttureEdottoService {
 
     // Set dati POSTAZIONE EMERGENZA SANITARIA
     public void setDatiPostazioneEmergenzaSanitaria(OrganigrammaStruttura struttura, XMLStreamReader streamReader) throws XMLStreamException {
-        //todo struttura.setDistretto();
+        Integer progDistretto = null;
         struttura.setParent(struttura.getDistretto());
 
         while (streamReader.hasNext()) {
@@ -237,9 +267,13 @@ public class StruttureEdottoService {
             if(evento == XMLStreamReader.START_ELEMENT) {
                 String tag = streamReader.getLocalName();
                 if(tag.equals("progDistretto")) {
-                    struttura.setProgDistretto(Integer.parseInt(streamReader.getElementText().trim()));
+                    progDistretto = Integer.parseInt(streamReader.getElementText().trim());
+                    struttura.setProgDistretto(progDistretto);
                 }
             }
+        }
+        if(progDistretto != null) {
+            struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
         }
         streamReader.close();
     }
@@ -262,7 +296,7 @@ public class StruttureEdottoService {
 
     // Set dati PUNTO DI CONTINUITA' ASSISTENZIALE
     public void setDatiPuntoDiContinuitaAssistenziale(OrganigrammaStruttura struttura, XMLStreamReader streamReader) throws XMLStreamException {
-        //todo struttura.setDistretto();
+        Integer progDistretto = null;
         struttura.setParent(struttura.getDistretto());
 
         while (streamReader.hasNext()) {
@@ -271,16 +305,21 @@ public class StruttureEdottoService {
             if(evento == XMLStreamReader.START_ELEMENT) {
                 String tag = streamReader.getLocalName();
                 if(tag.equals("progDistretto")) {
-                    struttura.setProgDistretto(Integer.parseInt(streamReader.getElementText().trim()));
+                    progDistretto = Integer.parseInt(streamReader.getElementText().trim());
+                    struttura.setProgDistretto(progDistretto);
                 }
             }
+        }
+        if(progDistretto != null) {
+            struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
         }
         streamReader.close();
     }
 
     // Set dati REPARTO OSPEDALIERO
-    public void setDatiRepartiOspedaliero(OrganigrammaStruttura struttura, XMLStreamReader streamReader) throws XMLStreamException {
-        //todo struttura.setParent();
+    public void setDatiRepartoOspedaliero(OrganigrammaStruttura struttura, XMLStreamReader streamReader) throws XMLStreamException {
+        Integer codStrutturaIstitutoDiRicovero = null;
+        Integer progStabilimento = null;
 
         while (streamReader.hasNext()) {
             int evento = streamReader.next();
@@ -293,20 +332,26 @@ public class StruttureEdottoService {
                         struttura.setCodiceHsp12(streamReader.getElementText().trim());
                         break;
                     case "progStabilimento" :
-                        struttura.setProgStabilimento(Integer.parseInt(streamReader.getElementText().trim()));
+                        progStabilimento = Integer.parseInt(streamReader.getElementText().trim());
+                        struttura.setProgStabilimento(progStabilimento);
                         break;
                     case "progReparto" :
                         struttura.setProgReparto(Integer.parseInt(streamReader.getElementText().trim()));
                         break;
+                    case "codStrutturaIstitutoDiRicovero" :
+                        codStrutturaIstitutoDiRicovero = Integer.parseInt(streamReader.getElementText());
                 }
             }
+        }
+        if(codStrutturaIstitutoDiRicovero != null && progStabilimento != null) {
+            struttura.setParent(getStrutturaByCodiceEdottoIstitutoAndStabilimento(codStrutturaIstitutoDiRicovero, progStabilimento).getId());
         }
         streamReader.close();
     }
 
     // Set dati SEDE MEDICINA DEI SERVIZI
     public void setDatiSedeMedicinaDeiServizi(OrganigrammaStruttura struttura, XMLStreamReader streamReader) throws XMLStreamException {
-        //todo struttura.setDistretto();
+        Integer progDistretto = null;
         struttura.setParent(struttura.getDistretto());
 
         while (streamReader.hasNext()) {
@@ -316,9 +361,13 @@ public class StruttureEdottoService {
                 String tag = streamReader.getLocalName();
 
                 if(tag.equals("progDistretto")) {
-                    struttura.setProgDistretto(Integer.parseInt(streamReader.getElementText().trim()));
+                    progDistretto = Integer.parseInt(streamReader.getElementText().trim());
+                    struttura.setProgDistretto(progDistretto);
                 }
             }
+        }
+        if(progDistretto != null) {
+            struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
         }
         streamReader.close();
     }
@@ -373,6 +422,9 @@ public class StruttureEdottoService {
 
     // Set dati SERVIZIO OSPEDALIERO
     public void setDatiServizioOspedaliero(OrganigrammaStruttura struttura, XMLStreamReader streamReader) throws XMLStreamException {
+        Integer progStabilimento = null;
+        Integer codStruttIstitutoDaRicovero = null;
+
         while (streamReader.hasNext()) {
             int evento = streamReader.next();
 
@@ -387,21 +439,25 @@ public class StruttureEdottoService {
                         struttura.setProgServizio(Integer.parseInt(streamReader.getElementText().trim()));
                         break;
                     case "progStabilimento" :
-                        String progStabilimento = streamReader.getElementText().trim();
-                        struttura.setProgStabilimento(Integer.parseInt(progStabilimento));
+                        progStabilimento = Integer.parseInt(streamReader.getElementText().trim());
+                        struttura.setProgStabilimento(progStabilimento);
                         break;
                     case "codStrutturaIstitutoDiRicovero" :
-                        String codStruttIstitutoDaRicovero = streamReader.getElementText();
+                        codStruttIstitutoDaRicovero = Integer.parseInt(streamReader.getElementText());
                         break;
                 }
             }
+        }
+        if(codStruttIstitutoDaRicovero != null && progStabilimento != null) {{
+            struttura.setParent(getStrutturaByCodiceEdottoIstitutoAndStabilimento(codStruttIstitutoDaRicovero, progStabilimento).getId());
+        }
         }
         streamReader.close();
     }
 
     // Set dati RESIDENZA ASSISTENZIALE
     public void setDatiResidenzaAssistenziale(OrganigrammaStruttura struttura, XMLStreamReader streamReader) throws XMLStreamException {
-        //todo struttura.setDistretto();
+        Integer progDistretto = null;
         struttura.setParent(struttura.getDistretto());
 
         while (streamReader.hasNext()) {
@@ -415,17 +471,21 @@ public class StruttureEdottoService {
                         struttura.setCodiceSts11(streamReader.getElementText().trim());
                         break;
                     case "progDistretto" :
-                        struttura.setProgDistretto(Integer.parseInt(streamReader.getElementText().trim()));
+                        progDistretto = Integer.parseInt(streamReader.getElementText().trim());
+                        struttura.setProgDistretto(progDistretto);
                         break;
                 }
             }
+        }
+        if(progDistretto != null) {
+            struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
         }
         streamReader.close();
     }
 
     // Set dati STABILIMENTO OSPEDALIERO
     public void setDatiStabilimentoOspedaliero(OrganigrammaStruttura struttura, XMLStreamReader streamReader) throws XMLStreamException {
-        //todo struttura.setParent();
+        Integer codStruttura = null;
 
         while (streamReader.hasNext()) {
             int evento = streamReader.next();
@@ -433,17 +493,24 @@ public class StruttureEdottoService {
             if(evento == XMLStreamReader.START_ELEMENT) {
                 String tag = streamReader.getLocalName();
 
-                if (tag.equals("progStabilimento")) {
-                    struttura.setProgStabilimento(Integer.parseInt(streamReader.getElementText().trim()));
+                switch (tag) {
+                    case "progStabilimento" :
+                        struttura.setProgStabilimento(Integer.parseInt(streamReader.getElementText().trim()));
+                        break;
+                    case "codStrutturaIstitutoDiRicovero" :
+                        codStruttura = Integer.parseInt(streamReader.getElementText());
                 }
             }
+        }
+        if(codStruttura != null) {
+            struttura.setParent(getOneByCodiceEdotto(codStruttura).getId());
         }
         streamReader.close();
     }
 
     // Set dati STRUTTURA RIABILITATIVA PSICHIATRICA
     public void setDatiStrutturaRiabilitativaPsichiatrica(OrganigrammaStruttura struttura, XMLStreamReader streamReader) throws XMLStreamException {
-        //todo struttura.setDistretto();
+        Integer progDistretto = null;
         struttura.setParent(struttura.getDistretto());
 
         while (streamReader.hasNext()) {
@@ -457,10 +524,14 @@ public class StruttureEdottoService {
                         struttura.setCodiceSts11(streamReader.getElementText().trim());
                         break;
                     case "progDistretto" :
-                        struttura.setProgDistretto(Integer.parseInt(streamReader.getElementText().trim()));
+                        progDistretto = Integer.parseInt(streamReader.getElementText().trim());
+                        struttura.setProgDistretto(progDistretto);
                         break;
                 }
             }
+        }
+        if(progDistretto != null) {
+            struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
         }
         streamReader.close();
     }
@@ -481,11 +552,23 @@ public class StruttureEdottoService {
         streamReader.close();
     }
 
-    public long findAslByCodice(String codNSIS) {
+    public int findAslByCodice(String codNSIS) {
         return orgRepositoryImpl.findAslByCodiceNSIS(codNSIS).getId();
     }
 
-    public long getStrutturaByCodiceEdottoIstitutoAndStabilimento(int codiceEdottoIstituto, int stabilimento) {
+    public OrganigrammaStruttura getStrutturaByCodiceEdottoIstitutoAndStabilimento(int codiceEdottoIstituto, int stabilimento) {
         return orgRepositoryImpl.findOneByCodiceEdottoGrampaAndStabilimento(codiceEdottoIstituto, stabilimento);
+    }
+
+    public OrganigrammaStruttura getOneByCodiceEdotto(int codiceEdotto) {
+        return orgRepositoryImpl.findOneByCodiceEdotto(codiceEdotto);
+    }
+
+    public Dizionario getDizionarioByCodifica(String codifica, String categoria) {
+        return dizionarioRepImpl.getDizionarioByCodifica(codifica, categoria);
+    }
+
+    public OrganigrammaStruttura getDistrettoByProg(int prog, int idAsl) {
+        return orgRepositoryImpl.findDistretto(prog, idAsl);
     }
 }

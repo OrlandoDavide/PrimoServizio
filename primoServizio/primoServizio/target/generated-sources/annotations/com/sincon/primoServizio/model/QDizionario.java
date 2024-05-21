@@ -25,7 +25,7 @@ public class QDizionario extends EntityPathBase<Dizionario> {
 
     public final StringPath denominazione = createString("denominazione");
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+    public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
     public final NumberPath<Integer> malattia = createNumber("malattia", Integer.class);
 

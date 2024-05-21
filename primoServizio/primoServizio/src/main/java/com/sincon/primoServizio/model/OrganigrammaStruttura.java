@@ -8,14 +8,14 @@ import java.time.LocalDate;
 
 @Entity
 @QueryEntity
-@Table(name = "ORGANIGRAMMA_STRUTTURA", schema = "strutture")
+@Table(name = "ORGANIGRAMMA_STRUTTURA", schema = "STRUTTURE")
 @Data
 public class OrganigrammaStruttura {
 
     @Id
     @Column(name = "ID_STRUTTURA")
     //@GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    private int id;
 
     @Column(name = "DENOMINAZIONE")
     private String denominazione;
