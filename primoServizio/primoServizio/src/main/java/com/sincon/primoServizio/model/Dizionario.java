@@ -12,7 +12,6 @@ public class Dizionario {
 
     @Id
     @Column(name = "ID_DIZIONARIO")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "DENOMINAZIONE")
@@ -21,8 +20,14 @@ public class Dizionario {
     @Column(name = "CATEGORIA")
     private String categoria;
 
-    @Column(name = "CODIFICA")
+    @Column(name = "CODIFICA", length = 16)
     private String codifica;
+
+    @Column(name = "CUSTOM_FLAG", length = 8)
+    private String customFlag;
+
+    @Column(name = "ATTIVO")
+    private boolean attivo;
 
     @Column(name = "MALATTIA")
     private int malattia;

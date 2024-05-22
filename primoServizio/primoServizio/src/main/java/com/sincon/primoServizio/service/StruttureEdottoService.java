@@ -10,12 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -26,7 +22,6 @@ public class StruttureEdottoService {
     private final ComuneRepository comuneRepository;
     private final DizionarioRepositoryImpl dizionarioRepImpl;
     private Utente utenteInSessione;
-
 
     @Autowired
     public StruttureEdottoService(OrgStrutturaRepositoryImpl orgRepositoryImpl,
@@ -74,7 +69,7 @@ public class StruttureEdottoService {
                     break;
             }
         }
-        if(codTipologiaStruttura != null) {
+        if(codTipologiaStruttura != null && !(codTipologiaStruttura.isBlank())) {
             struttura.setTipologiaEdotto(getDizionarioByCodifica(codTipologiaStruttura, "TIPOLOGIA_EDOTTO").getId());
         }
         datiGeneraliStruttura.close();
@@ -112,7 +107,7 @@ public class StruttureEdottoService {
         }
         setAudit(asl);
         setDatiGeneraliStruttura(asl, streamReader);
-        if(codifica != null) {
+        if(codifica != null && !(codifica.isBlank())) {
             asl.setTipologiaGiuridica(getDizionarioByCodifica(codifica, "TIPO_GIURIDICA").getId());
         }
         streamReader.close();
@@ -134,12 +129,14 @@ public class StruttureEdottoService {
     // Set DISTRETTO SOCIO-SANITARIO
     public void setDistretto(OrganigrammaStruttura distretto, XMLStreamReader streamReader) throws XMLStreamException {
         String codifica = null;
+        int evento;
+        String tag = "";
 
-        while (streamReader.hasNext()) {
-            int evento = streamReader.next();
+        do {
+            evento = streamReader.next();
 
             if(evento == XMLStreamReader.START_ELEMENT) {
-                String tag = streamReader.getLocalName().trim();
+                tag = streamReader.getLocalName().trim();
 
                 switch (tag) {
                     case "partitaIVA" :
@@ -164,12 +161,14 @@ public class StruttureEdottoService {
                         break;
                 }
             }
-        }
+        } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
+
         setAudit(distretto);
         setDatiGeneraliStruttura(distretto, streamReader);
-        if(codifica != null) {
+        if(codifica != null && !(codifica.isBlank())) {
             distretto.setTipologiaGiuridica(getDizionarioByCodifica(codifica, "TIPO_GIURIDICA").getId());
         }
+
         streamReader.close();
     }
 
@@ -193,7 +192,7 @@ public class StruttureEdottoService {
                 struttura.setTipologiaEdotto(this.getDizionario(24024).getId());
                 break;
             case "5":
-                // Casa di cura privata non accreditata
+                // Casa di cura privata NON accreditata
                 struttura.setTipologiaEdotto(this.getDizionario(24025).getId());
                 break;
             case "6":
@@ -645,22 +644,6 @@ public class StruttureEdottoService {
         streamReader.close();
     }
 
-    // Aggiorna EDOTTO
-    @Transactional
-    public void aggiornaEdotto(String xmlFilePath) throws IOException, XMLStreamException {
-        try(BufferedReader reader = new BufferedReader(new FileReader(xmlFilePath + "ASL.xml"))) {
-            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-            XMLStreamReader streamReader = inputFactory.createXMLStreamReader(reader);
-
-            while(streamReader.hasNext()) {
-                int tag = streamReader.next();
-                if(tag == XMLStreamReader.START_ELEMENT && streamReader.getLocalName().equals("datiStruttutaSanitaria")) {
-                }
-            }
-            streamReader.close();
-        }
-    }
-
     // Cast da String a LocalDate, formato: "yyyy-MM-dd"
     public LocalDate parseStringToLocalDate(String stringData) {
         DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -668,7 +651,7 @@ public class StruttureEdottoService {
         return LocalDate.parse(stringData, formatoData);
     }
 
-    // Verifica se l'indirizzo IP è "locale"
+    // Verifica se l'indirizzo IP è "locale"/autorizzato
     public boolean isLocalAddress(String indirizzoIP) {
         //todo controlla se indirizzo è locale ??forse
         return false;
@@ -695,8 +678,7 @@ public class StruttureEdottoService {
     }
 
     public Dizionario getDizionario(Integer id) {
-        if(id != null) {
-            return dizionarioRepImpl.getDizionarioById(id);
-        } else return null;
+        return dizionarioRepImpl.getDizionarioById(id);
     }
+
 }

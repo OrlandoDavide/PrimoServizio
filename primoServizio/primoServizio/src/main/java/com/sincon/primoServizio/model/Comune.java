@@ -1,10 +1,7 @@
 package com.sincon.primoServizio.model;
 
 import com.querydsl.core.annotations.QueryEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -17,15 +14,15 @@ public class Comune {
     @Column(name = "ISTAT")
     private String istat;
 
-    @Column(name = "DENOMINAZIONE")
-    private String denominazione;
+    @Column(name = "DENOMINAZIONE", length = 40)
+    private String nome;
 
-    @Column(name = "SIGLAPROV")
+    @Column(name = "SIGLAPROV", length = 40)
     private String provincia;
 
-    @Column(name = "ASL")
+    @Column(name = "ASL", length = 40)
     private String asl;
 
-    @Column(name = "ATTIVO")
+    @Column(name = "ATTIVO", length = 1)
     private String attivo;
 }

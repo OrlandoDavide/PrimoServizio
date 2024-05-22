@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @QueryEntity
@@ -48,12 +49,16 @@ public class OrganigrammaStruttura {
     @Column(name = "CF_REFERENTE")
     private String cfReferente;
 
-    @Column(name = "ID_TIPOLOGIA")
+    @ManyToOne(targetEntity = Dizionario.class)
+    @JoinColumn(name = "ID_TIPOLOGIA", referencedColumnName = "ID_DIZIONARIO")
     private int tipologia;
 
     @ManyToOne(targetEntity = OrganigrammaStruttura.class)
     @JoinColumn(name = "ID_PARENT", referencedColumnName = "ID_STRUTTURA")
     private int parent;
+
+    @OneToMany(targetEntity = OrganigrammaStruttura.class, mappedBy = "parent", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<OrganigrammaStruttura> childrens;
 
     @ManyToOne(targetEntity = OrganigrammaStruttura.class)
     @JoinColumn(name = "COD_STRUTTURA_ORIGINALE", referencedColumnName = "ID_STRUTTURA")
@@ -71,13 +76,14 @@ public class OrganigrammaStruttura {
     @Column(name = "RETE_REGIONALE")
     private boolean reteRegionale;
 
-    @Column(name = "ID_CATEGORIA")
+    @ManyToOne(targetEntity = Dizionario.class)
+    @JoinColumn(name = "ID_CATEGORIA", referencedColumnName = "ID_DIZIONARIO")
     private int categoria;
 
     @Column(name = "CODICE_TS")
     private String coditeTs;
 
-    @Column(name = "COD_CAP")
+    @Column(name = "COD_CAP", length = 10)
     private String codCap;
 
     @Column(name = "COD_MINISTERIALE")
@@ -95,10 +101,10 @@ public class OrganigrammaStruttura {
     @Column(name = "CODICE_HSP11")
     private String codiceHsp11;
 
-    @Column(name = "CODICE_STS12")
+    @Column(name = "CODICE_HSP12")
     private String codiceHsp12;
 
-    @Column(name = "COD_EDOTTO")
+    @Column(name = "COD_EDOTTO", length = 11)
     private int codiceEdotto;
 
     @ManyToOne(targetEntity = Comune.class)
@@ -114,7 +120,8 @@ public class OrganigrammaStruttura {
     @Column(name = "DATA_ATTIVAZIONE")
     private LocalDate dataAttivazione;
 
-    @Column(name = "ID_TIPOLOGIA_GIURIDICA")
+    @ManyToOne(targetEntity = Dizionario.class)
+    @JoinColumn(name = "ID_TIPOLOGIA_GIURIDICA", referencedColumnName = "ID_DIZIONARIO")
     private int tipologiaGiuridica;
 
     @ManyToOne(targetEntity = Dizionario.class)
@@ -125,19 +132,19 @@ public class OrganigrammaStruttura {
     @JoinColumn(name = "ID_DISTRETTO", referencedColumnName = "ID_STRUTTURA")
     private int distretto;
 
-    @Column(name = "PROG_DISTRETTO")
+    @Column(name = "PROG_DISTRETTO", length = 11)
     private int progDistretto;
 
-    @Column(name = "PROG_SERVIZIO")
+    @Column(name = "PROG_SERVIZIO", length = 3)
     private int progServizio;
 
-    @Column(name = "PROG_STABILIMENTO")
+    @Column(name = "PROG_STABILIMENTO", length = 3)
     private int progStabilimento;
 
-    @Column(name = "PROG_REPARTO")
+    @Column(name = "PROG_REPARTO", length = 3)
     private int progReparto;
 
-    @Column(name = "PROG_CO")
+    @Column(name = "PROG_CO", length = 3)
     private int progCO;
 
     @Column(name = "ID_CREATORE")

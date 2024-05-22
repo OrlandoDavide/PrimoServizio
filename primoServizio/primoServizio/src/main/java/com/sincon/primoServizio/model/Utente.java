@@ -12,7 +12,6 @@ public class Utente {
 
     @Id
     @Column(name = "ID_UTENTE")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "EMAIL", nullable = false, unique = true)
@@ -21,6 +20,6 @@ public class Utente {
     @Column(name = "PASSWORD", nullable = false)
     private String password;
 
-    @Column(name = "ATTIVO", columnDefinition = "boolean default true") //non funziona per tutti i DB
+    @Column(name = "ATTIVO", columnDefinition = "boolean default true")
     private boolean attivo = true;
 }

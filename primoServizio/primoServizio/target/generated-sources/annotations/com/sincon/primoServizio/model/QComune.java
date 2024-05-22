@@ -23,9 +23,9 @@ public class QComune extends EntityPathBase<Comune> {
 
     public final StringPath attivo = createString("attivo");
 
-    public final StringPath denominazione = createString("denominazione");
-
     public final StringPath istat = createString("istat");
+
+    public final StringPath nome = createString("nome");
 
     public final StringPath provincia = createString("provincia");
 

@@ -26,9 +26,11 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
 
     public final QOrganigrammaStruttura asl;
 
-    public final NumberPath<Integer> categoria = createNumber("categoria", Integer.class);
+    public final QDizionario categoria;
 
     public final StringPath cfReferente = createString("cfReferente");
+
+    public final ListPath<OrganigrammaStruttura, QOrganigrammaStruttura> childrens = this.<OrganigrammaStruttura, QOrganigrammaStruttura>createList("childrens", OrganigrammaStruttura.class, QOrganigrammaStruttura.class, PathInits.DIRECT2);
 
     public final StringPath codCap = createString("codCap");
 
@@ -122,11 +124,11 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
 
     public final StringPath telefonoTitolare = createString("telefonoTitolare");
 
-    public final NumberPath<Integer> tipologia = createNumber("tipologia", Integer.class);
+    public final QDizionario tipologia;
 
     public final QDizionario tipologiaEdotto;
 
-    public final NumberPath<Integer> tipologiaGiuridica = createNumber("tipologiaGiuridica", Integer.class);
+    public final QDizionario tipologiaGiuridica;
 
     public QOrganigrammaStruttura(String variable) {
         this(OrganigrammaStruttura.class, forVariable(variable), INITS);
@@ -147,11 +149,14 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
     public QOrganigrammaStruttura(Class<? extends OrganigrammaStruttura> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.asl = inits.isInitialized("asl") ? new QOrganigrammaStruttura(forProperty("asl"), inits.get("asl")) : null;
+        this.categoria = inits.isInitialized("categoria") ? new QDizionario(forProperty("categoria")) : null;
         this.comune = inits.isInitialized("comune") ? new QComune(forProperty("comune")) : null;
         this.distretto = inits.isInitialized("distretto") ? new QOrganigrammaStruttura(forProperty("distretto"), inits.get("distretto")) : null;
         this.parent = inits.isInitialized("parent") ? new QOrganigrammaStruttura(forProperty("parent"), inits.get("parent")) : null;
         this.strutturaOriginale = inits.isInitialized("strutturaOriginale") ? new QOrganigrammaStruttura(forProperty("strutturaOriginale"), inits.get("strutturaOriginale")) : null;
+        this.tipologia = inits.isInitialized("tipologia") ? new QDizionario(forProperty("tipologia")) : null;
         this.tipologiaEdotto = inits.isInitialized("tipologiaEdotto") ? new QDizionario(forProperty("tipologiaEdotto")) : null;
+        this.tipologiaGiuridica = inits.isInitialized("tipologiaGiuridica") ? new QDizionario(forProperty("tipologiaGiuridica")) : null;
     }
 
 }

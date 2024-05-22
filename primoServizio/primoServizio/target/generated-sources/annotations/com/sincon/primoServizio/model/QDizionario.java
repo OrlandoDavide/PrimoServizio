@@ -19,9 +19,13 @@ public class QDizionario extends EntityPathBase<Dizionario> {
 
     public static final QDizionario dizionario = new QDizionario("dizionario");
 
+    public final BooleanPath attivo = createBoolean("attivo");
+
     public final StringPath categoria = createString("categoria");
 
     public final StringPath codifica = createString("codifica");
+
+    public final StringPath customFlag = createString("customFlag");
 
     public final StringPath denominazione = createString("denominazione");
 
