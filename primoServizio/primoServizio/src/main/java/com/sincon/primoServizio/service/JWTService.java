@@ -5,6 +5,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +19,8 @@ import java.util.Map;
 @Service
 public class JWTService {
 
+    private static final Logger logger = LoggerFactory.getLogger(JWTService.class);
     private final JwtConfig jwtConfig;
-
     @Autowired
     public JWTService(JwtConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
@@ -72,5 +74,4 @@ public class JWTService {
             return false;
         }
     }
-
 }

@@ -4,6 +4,8 @@ import com.sincon.primoServizio.exception.NotFoundException;
 import com.sincon.primoServizio.model.Utente;
 import com.sincon.primoServizio.service.JWTService;
 import com.sincon.primoServizio.service.UtenteService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import java.sql.SQLException;
 @RestController
 public class LoginController {
 
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
     private final UtenteService utenteService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JWTService jwtService;
@@ -51,6 +54,7 @@ public class LoginController {
                 throw new NotFoundException();
             }
         } catch (SQLException ex) {
+            logger.error("Errore SQL durante fase di LOGIN", ex);
             throw new SQLException();
         }
     }

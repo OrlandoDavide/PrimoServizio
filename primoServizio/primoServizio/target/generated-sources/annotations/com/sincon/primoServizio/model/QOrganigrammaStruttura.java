@@ -48,7 +48,7 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
 
     public final StringPath codiceSts11 = createString("codiceSts11");
 
-    public final StringPath coditeTs = createString("coditeTs");
+    public final StringPath codiceTs = createString("codiceTs");
 
     public final StringPath codMinisteriale = createString("codMinisteriale");
 

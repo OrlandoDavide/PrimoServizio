@@ -1,18 +1,23 @@
 package com.sincon.primoServizio.service;
 
+import com.sincon.primoServizio.dto.UtenteDto;
 import com.sincon.primoServizio.exception.NotFoundException;
 import com.sincon.primoServizio.model.Utente;
 import com.sincon.primoServizio.repository.UtenteRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.util.List;
 
 @Service
 public class UtenteService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UtenteService.class);
     private final UtenteRepository utenteRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -23,39 +28,35 @@ public class UtenteService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Find utente by ID
     @Transactional
     public Utente getUtenteById(Long id) {
         return utenteRepository.findUtenteById(id);
     }
 
+    // Find utente by EMAIL
     @Transactional
     public Utente getUtenteByEmail(String email) throws NotFoundException, SQLException {
         return utenteRepository.findUtenteByEmail(email);
     }
 
     @Transactional
-    public void registraUtente(Utente utente) throws SQLException {
-        Utente utenteRegistrato = utenteRepository.findUtenteById(utente.getId());
-
-        if(utenteRegistrato != null) {
-            utenteRegistrato.setEmail(utente.getEmail());
-            utenteRegistrato.setAttivo(utente.isAttivo());
-
-            String criptedPassword = passwordEncoder.encode(utente.getPassword());
-            utenteRegistrato.setPassword(criptedPassword);
-
-            utenteRepository.save(utenteRegistrato);
-        } else {
-            utenteRepository.save(utente);
-        }
+    public List<UtenteDto> getListaUtenti() {
+        return utenteRepository.findAllDto();
     }
 
-    // Crea nuovo utente
+    // Registra utente
     @Transactional
-    public void creaUtente(Utente utente) {
-        if(utente != null) {
-            utenteRepository.save(utente);
-        }
+    public void registraUtente(Utente utente) throws SQLException {
+        Utente utenteRegistrato = new Utente();
+
+        utenteRegistrato.setEmail(utente.getEmail());
+        utenteRegistrato.setAttivo(utente.isAttivo());
+
+        String criptedPassword = passwordEncoder.encode(utente.getPassword());
+        utenteRegistrato.setPassword(criptedPassword);
+
+        utenteRepository.save(utenteRegistrato);
     }
 
     // Modifica utente

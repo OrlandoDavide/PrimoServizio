@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-05-22T16:17:19+0200",
+    date = "2024-05-23T15:59:21+0200",
     comments = "version: 1.6.0.Beta1, compiler: javac, environment: Java 20.0.2.1 (Amazon.com Inc.)"
 )
 @Component
-public class EntityMapper$DizionarioMapperImpl implements EntityMapper.DizionarioMapper {
+public class DizionarioMapperImpl implements DizionarioMapper {
 
     @Override
     public DizionarioDto dizionarioToDizionarioDto(Dizionario dizionario) {
@@ -25,6 +25,8 @@ public class EntityMapper$DizionarioMapperImpl implements EntityMapper.Dizionari
         dizionarioDto.setDenominazione( dizionario.getDenominazione() );
         dizionarioDto.setCategoria( dizionario.getCategoria() );
         dizionarioDto.setCodifica( dizionario.getCodifica() );
+        dizionarioDto.setCustomFlag( dizionario.getCustomFlag() );
+        dizionarioDto.setAttivo( dizionario.isAttivo() );
         dizionarioDto.setMalattia( dizionario.getMalattia() );
         dizionarioDto.setParent( dizionario.getParent() );
         dizionarioDto.setOrdine( dizionario.getOrdine() );
@@ -46,6 +48,8 @@ public class EntityMapper$DizionarioMapperImpl implements EntityMapper.Dizionari
         dizionario.setDenominazione( dizionarioDto.getDenominazione() );
         dizionario.setCategoria( dizionarioDto.getCategoria() );
         dizionario.setCodifica( dizionarioDto.getCodifica() );
+        dizionario.setCustomFlag( dizionarioDto.getCustomFlag() );
+        dizionario.setAttivo( dizionarioDto.isAttivo() );
         dizionario.setMalattia( dizionarioDto.getMalattia() );
         dizionario.setParent( dizionarioDto.getParent() );
         dizionario.setOrdine( dizionarioDto.getOrdine() );

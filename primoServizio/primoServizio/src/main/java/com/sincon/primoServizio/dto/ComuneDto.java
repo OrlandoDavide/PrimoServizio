@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class ComuneDto {
     private String istat;
-    private String denominazione;
+    private String nome;
     private String provincia;
     private String asl;
     private String attivo;

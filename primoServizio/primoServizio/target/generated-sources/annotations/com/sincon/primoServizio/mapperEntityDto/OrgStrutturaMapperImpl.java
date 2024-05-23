@@ -2,16 +2,18 @@ package com.sincon.primoServizio.mapperEntityDto;
 
 import com.sincon.primoServizio.dto.OrganigrammaStrutturaDto;
 import com.sincon.primoServizio.model.OrganigrammaStruttura;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-05-22T16:17:18+0200",
+    date = "2024-05-23T15:59:21+0200",
     comments = "version: 1.6.0.Beta1, compiler: javac, environment: Java 20.0.2.1 (Amazon.com Inc.)"
 )
 @Component
-public class EntityMapper$OrganigrammaStrutturaMapperImpl implements EntityMapper.OrganigrammaStrutturaMapper {
+public class OrgStrutturaMapperImpl implements OrgStrutturaMapper {
 
     @Override
     public OrganigrammaStrutturaDto orgStrutturaToOrgStrutturaDto(OrganigrammaStruttura orgStruttura) {
@@ -34,15 +36,22 @@ public class EntityMapper$OrganigrammaStrutturaMapperImpl implements EntityMappe
         organigrammaStrutturaDto.setCfReferente( orgStruttura.getCfReferente() );
         organigrammaStrutturaDto.setTipologia( orgStruttura.getTipologia() );
         organigrammaStrutturaDto.setParent( orgStruttura.getParent() );
+        List<OrganigrammaStruttura> list = orgStruttura.getChildrens();
+        if ( list != null ) {
+            organigrammaStrutturaDto.setChildrens( new ArrayList<OrganigrammaStruttura>( list ) );
+        }
         organigrammaStrutturaDto.setStrutturaOriginale( orgStruttura.getStrutturaOriginale() );
         organigrammaStrutturaDto.setAbilitato( orgStruttura.isAbilitato() );
         organigrammaStrutturaDto.setPubblico( orgStruttura.getPubblico() );
         organigrammaStrutturaDto.setReteRegionale( orgStruttura.isReteRegionale() );
         organigrammaStrutturaDto.setCategoria( orgStruttura.getCategoria() );
+        organigrammaStrutturaDto.setCodiceTs( orgStruttura.getCodiceTs() );
         organigrammaStrutturaDto.setCodCap( orgStruttura.getCodCap() );
         organigrammaStrutturaDto.setCodMinisteriale( orgStruttura.getCodMinisteriale() );
+        organigrammaStrutturaDto.setCodProvinciale( orgStruttura.getCodProvinciale() );
         organigrammaStrutturaDto.setCodiceNSIS( orgStruttura.getCodiceNSIS() );
         organigrammaStrutturaDto.setCodiceSts11( orgStruttura.getCodiceSts11() );
+        organigrammaStrutturaDto.setCodiceHsp11( orgStruttura.getCodiceHsp11() );
         organigrammaStrutturaDto.setCodiceHsp12( orgStruttura.getCodiceHsp12() );
         organigrammaStrutturaDto.setCodiceEdotto( orgStruttura.getCodiceEdotto() );
         organigrammaStrutturaDto.setComune( orgStruttura.getComune() );
@@ -97,15 +106,22 @@ public class EntityMapper$OrganigrammaStrutturaMapperImpl implements EntityMappe
         organigrammaStruttura.setCfReferente( orgStrutturaDto.getCfReferente() );
         organigrammaStruttura.setTipologia( orgStrutturaDto.getTipologia() );
         organigrammaStruttura.setParent( orgStrutturaDto.getParent() );
+        List<OrganigrammaStruttura> list = orgStrutturaDto.getChildrens();
+        if ( list != null ) {
+            organigrammaStruttura.setChildrens( new ArrayList<OrganigrammaStruttura>( list ) );
+        }
         organigrammaStruttura.setStrutturaOriginale( orgStrutturaDto.getStrutturaOriginale() );
         organigrammaStruttura.setAbilitato( orgStrutturaDto.isAbilitato() );
         organigrammaStruttura.setPubblico( orgStrutturaDto.getPubblico() );
         organigrammaStruttura.setReteRegionale( orgStrutturaDto.isReteRegionale() );
         organigrammaStruttura.setCategoria( orgStrutturaDto.getCategoria() );
+        organigrammaStruttura.setCodiceTs( orgStrutturaDto.getCodiceTs() );
         organigrammaStruttura.setCodCap( orgStrutturaDto.getCodCap() );
         organigrammaStruttura.setCodMinisteriale( orgStrutturaDto.getCodMinisteriale() );
+        organigrammaStruttura.setCodProvinciale( orgStrutturaDto.getCodProvinciale() );
         organigrammaStruttura.setCodiceNSIS( orgStrutturaDto.getCodiceNSIS() );
         organigrammaStruttura.setCodiceSts11( orgStrutturaDto.getCodiceSts11() );
+        organigrammaStruttura.setCodiceHsp11( orgStrutturaDto.getCodiceHsp11() );
         organigrammaStruttura.setCodiceHsp12( orgStrutturaDto.getCodiceHsp12() );
         organigrammaStruttura.setCodiceEdotto( orgStrutturaDto.getCodiceEdotto() );
         organigrammaStruttura.setComune( orgStrutturaDto.getComune() );

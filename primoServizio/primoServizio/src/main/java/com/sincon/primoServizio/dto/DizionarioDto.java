@@ -11,6 +11,8 @@ public class DizionarioDto {
     private String denominazione;
     private String categoria;
     private String codifica;
+    private String customFlag;
+    private boolean attivo;
     private int malattia;
     private int parent;
     private int ordine;

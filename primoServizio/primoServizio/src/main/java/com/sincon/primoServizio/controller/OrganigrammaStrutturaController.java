@@ -1,6 +1,8 @@
 package com.sincon.primoServizio.controller;
 
 import com.sincon.primoServizio.service.StruttureEdottoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +18,7 @@ import java.util.regex.Pattern;
 @RestController
 public class OrganigrammaStrutturaController {
 
+    private static final Logger logger = LoggerFactory.getLogger(OrganigrammaStrutturaController.class);
     private static final Pattern XML_PATTERN = Pattern.compile(".*\\.xml$", Pattern.CASE_INSENSITIVE);
     private final StruttureEdottoService edottoService;
 

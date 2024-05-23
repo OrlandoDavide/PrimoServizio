@@ -1,9 +1,11 @@
 package com.sincon.primoServizio.dto;
 
+import com.sincon.primoServizio.model.OrganigrammaStruttura;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,6 +23,7 @@ public class OrganigrammaStrutturaDto {
     private String cfReferente;
     private int tipologia;
     private int parent;
+    private List<OrganigrammaStruttura> childrens;
     private int strutturaOriginale;
     private boolean abilitato;
     private int pubblico;
@@ -30,8 +33,10 @@ public class OrganigrammaStrutturaDto {
     private String codiceTs;
     private String codCap;
     private String codMinisteriale;
+    private String codProvinciale;
     private String codiceNSIS;
     private String codiceSts11;
+    private String codiceHsp11;
     private String codiceHsp12;
     private int codiceEdotto;
     private String comune;

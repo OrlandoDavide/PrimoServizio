@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-05-22T16:17:19+0200",
+    date = "2024-05-23T15:59:21+0200",
     comments = "version: 1.6.0.Beta1, compiler: javac, environment: Java 20.0.2.1 (Amazon.com Inc.)"
 )
 @Component
-public class EntityMapper$UtenteMapperImpl implements EntityMapper.UtenteMapper {
+public class UtenteMapperImpl implements UtenteMapper {
 
     @Override
     public UtenteDto utenteToUtenteDto(Utente utente) {

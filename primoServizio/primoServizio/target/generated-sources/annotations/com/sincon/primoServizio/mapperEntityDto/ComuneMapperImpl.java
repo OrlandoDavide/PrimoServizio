@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-05-22T16:17:19+0200",
+    date = "2024-05-23T15:59:21+0200",
     comments = "version: 1.6.0.Beta1, compiler: javac, environment: Java 20.0.2.1 (Amazon.com Inc.)"
 )
 @Component
-public class EntityMapper$ComuneMapperImpl implements EntityMapper.ComuneMapper {
+public class ComuneMapperImpl implements ComuneMapper {
 
     @Override
     public ComuneDto comuneToComuneDto(Comune comune) {
@@ -22,6 +22,7 @@ public class EntityMapper$ComuneMapperImpl implements EntityMapper.ComuneMapper 
         ComuneDto comuneDto = new ComuneDto();
 
         comuneDto.setIstat( comune.getIstat() );
+        comuneDto.setNome( comune.getNome() );
         comuneDto.setProvincia( comune.getProvincia() );
         comuneDto.setAsl( comune.getAsl() );
         comuneDto.setAttivo( comune.getAttivo() );
@@ -38,6 +39,7 @@ public class EntityMapper$ComuneMapperImpl implements EntityMapper.ComuneMapper 
         Comune comune = new Comune();
 
         comune.setIstat( comuneDto.getIstat() );
+        comune.setNome( comuneDto.getNome() );
         comune.setProvincia( comuneDto.getProvincia() );
         comune.setAsl( comuneDto.getAsl() );
         comune.setAttivo( comuneDto.getAttivo() );

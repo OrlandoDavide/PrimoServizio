@@ -5,11 +5,13 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 @Entity
 @QueryEntity
 @Table(name = "UTENTE", schema = "STRUTTURE")
 @Data
-public class Utente {
+public class Utente implements Serializable {
 
     @Id
     @Column(name = "ID_UTENTE")

@@ -83,7 +83,7 @@ public class OrganigrammaStruttura {
     private int categoria;
 
     @Column(name = "CODICE_TS")
-    private String coditeTs;
+    private String codiceTs;
 
     @Column(name = "COD_CAP", length = 10)
     private String codCap;
