@@ -36,39 +36,46 @@ public class StruttureEdottoService {
     // Set dati GENERALI STRUTTURA
     public void setDatiGeneraliStruttura(OrganigrammaStruttura struttura, XMLStreamReader datiGeneraliStruttura) throws XMLStreamException {
         String codTipologiaStruttura = null;
+        int evento;
+        String tag = "";
 
-        while (datiGeneraliStruttura.hasNext()) {
-            String tag = datiGeneraliStruttura.getLocalName();
-            switch (tag) {
-                case "denominazione" :
-                    struttura.setDenominazione(datiGeneraliStruttura.getElementText());
-                    break;
-                case "codCAP" :
-                    struttura.setCodCap(datiGeneraliStruttura.getElementText());
-                    break;
-                case "comune" :
-                    if(comuneRepository.findByCodiceIstat(datiGeneraliStruttura.getElementText()) != null) {
-                    struttura.setComune(datiGeneraliStruttura.getElementText());
-                    } else {
-                        struttura.setComune(null);
-                    }
-                    break;
-                case "codTipologiaStruttura" :
-                    codTipologiaStruttura = datiGeneraliStruttura.getElementText();
-                    break;
-                case "dataIstituzione" :
-                    LocalDate dataAttivazione = parseStringToLocalDate(datiGeneraliStruttura.getElementText());
+        do {
+            evento = datiGeneraliStruttura.next();
 
-                    struttura.setDataAttivazione(dataAttivazione);
-                    struttura.setDataApertura(dataAttivazione);
-                    break;
-                case "dataChiusura" :
-                    LocalDate dataChiusura = parseStringToLocalDate(datiGeneraliStruttura.getElementText());
+            if(evento == XMLStreamReader.START_ELEMENT) {
+                tag = datiGeneraliStruttura.getLocalName();
 
-                    struttura.setDataChiusura(dataChiusura);
-                    break;
+                switch (tag) {
+                    case "denominazione" :
+                        struttura.setDenominazione(datiGeneraliStruttura.getElementText());
+                        break;
+                    case "codCAP" :
+                        struttura.setCodCap(datiGeneraliStruttura.getElementText());
+                        break;
+                    case "comune" :
+                        if(comuneRepository.findByCodiceIstat(datiGeneraliStruttura.getElementText()) != null) {
+                            struttura.setComune(datiGeneraliStruttura.getElementText());
+                        } else {
+                            struttura.setComune(null);
+                        }
+                        break;
+                    case "codTipologiaStruttura" :
+                        codTipologiaStruttura = datiGeneraliStruttura.getElementText();
+                        break;
+                    case "dataIstituzione" :
+                        LocalDate dataAttivazione = parseStringToLocalDate(datiGeneraliStruttura.getElementText());
+
+                        struttura.setDataAttivazione(dataAttivazione);
+                        struttura.setDataApertura(dataAttivazione);
+                        break;
+                    case "dataChiusura" :
+                        LocalDate dataChiusura = parseStringToLocalDate(datiGeneraliStruttura.getElementText());
+
+                        struttura.setDataChiusura(dataChiusura);
+                        break;
+                }
             }
-        }
+        } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
         if(codTipologiaStruttura != null && !(codTipologiaStruttura.isBlank())) {
             struttura.setTipologiaEdotto(getDizionarioByCodifica(codTipologiaStruttura, "TIPOLOGIA_EDOTTO").getId());
         }
@@ -118,11 +125,11 @@ public class StruttureEdottoService {
         if(struttura.getId() < 1) {
             struttura.setCreatedDate(LocalDate.now());
             struttura.setCreatedBy(Math.toIntExact(utenteInSessione.getId()));
-            //todo struttura.setCreatedWith(); boh?
+            //todo struttura.setCreatedWith();
         } else {
             struttura.setModifiedDate(LocalDate.now());
             struttura.setModifiedBy(Math.toIntExact(utenteInSessione.getId()));
-            //todo struttura.setModifiedWith(); boh?
+            //todo struttura.setModifiedWith();
         }
     }
 
@@ -602,13 +609,15 @@ public class StruttureEdottoService {
 
     // Set dati STRUTTURA RIABILITATIVA PSICHIATRICA
     public void setDatiStrutturaRiabilitativaPsichiatrica(OrganigrammaStruttura struttura, XMLStreamReader streamReader) throws XMLStreamException {
+        int evento;
+        String tag = "";
         Integer progDistretto = null;
 
-        while (streamReader.hasNext()) {
-            int evento = streamReader.next();
+        do {
+            evento = streamReader.next();
 
             if(evento == XMLStreamReader.START_ELEMENT) {
-                String tag = streamReader.getLocalName();
+                tag = streamReader.getLocalName();
 
                 switch (tag) {
                     case "codiceSTS11" :
@@ -620,7 +629,7 @@ public class StruttureEdottoService {
                         break;
                 }
             }
-        }
+        } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
         struttura.setParent(struttura.getDistretto());
         if(progDistretto != null) {
             struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());

@@ -3,6 +3,7 @@ package com.sincon.primoServizio.model;
 import com.querydsl.core.annotations.QueryEntity;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @QueryEntity
 @Table(name = "ORGANIGRAMMA_STRUTTURA", schema = "STRUTTURE")
 @Data
+@Component
 public class OrganigrammaStruttura {
 
     @Id
