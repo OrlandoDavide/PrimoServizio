@@ -1,10 +1,8 @@
 package com.sincon.primoServizio.service;
 
-import com.sincon.primoServizio.model.Dizionario;
 import com.sincon.primoServizio.model.OrganigrammaStruttura;
 import com.sincon.primoServizio.model.Utente;
 import com.sincon.primoServizio.repository.ComuneRepository;
-import com.sincon.primoServizio.repository.DizionarioRepositoryImpl;
 import com.sincon.primoServizio.repository.OrgStrutturaRepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +81,7 @@ public class StruttureEdottoService {
                 struttura.setTipologiaEdotto(dizionarioService.getDizionarioByCodifica(codTipologiaStruttura,
                                                                                 "TIPOLOGIA_EDOTTO").getId());
             }
-        } finally {  }
+        } finally {}
     }
 
     // Set ASL
@@ -126,7 +124,7 @@ public class StruttureEdottoService {
                 asl.setTipologiaGiuridica(dizionarioService.getDizionarioByCodifica(codifica,
                                                                             "TIPO_GIURIDICA").getId());
             }
-        } finally {  }
+        } finally {}
     }
 
     // Set AUDIT
@@ -186,7 +184,7 @@ public class StruttureEdottoService {
                 distretto.setTipologiaGiuridica(dizionarioService.getDizionarioByCodifica(codifica,
                                                                                   "TIPO_GIURIDICA").getId());
             }
-        } finally {  }
+        } finally {}
     }
 
     // Set TIPOLOGIA ISTITUTO DI RICOVERO
@@ -252,7 +250,7 @@ public class StruttureEdottoService {
             if(struttura.getTipologiaEdotto() != 2 && struttura.getTipologiaEdotto() != 3) {
                 struttura.setParent(struttura.getAsl());
             }
-        } finally {  }
+        } finally {}
     }
 
     // Set dati FARMACIA
@@ -281,7 +279,7 @@ public class StruttureEdottoService {
             if(progDistretto != null) {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
             }
-        } finally {  }
+        } finally {}
     }
 
     // Set dati AMBULATORIO SPECIALISTICO
@@ -313,7 +311,7 @@ public class StruttureEdottoService {
            if(progDistretto != null) {
                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
            }
-       } finally {  }
+       } finally {}
     }
 
     // Set dati STRUTTURA HOSPICE
@@ -339,7 +337,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             struttura.setParent(struttura.getAsl());
-        } finally { }
+        } finally {}
     }
 
     // Set dati ISTITUTO PENITENZIARIO
@@ -360,7 +358,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
 
-        } finally {  }
+        } finally {}
     }
 
     // Set dati OSPEDALE DI COMUNITA'
@@ -381,7 +379,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
 
-        } finally { }
+        } finally {}
     }
 
     // Set dati POSTAZIONE EMERGENZA SANITARIA
@@ -407,7 +405,7 @@ public class StruttureEdottoService {
             if(progDistretto != null) {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
             }
-        } finally {  }
+        } finally {}
     }
 
     // Set dati STRUTTURA SPECIALISTICA
@@ -429,7 +427,7 @@ public class StruttureEdottoService {
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             struttura.setParent(struttura.getAsl());
 
-        } finally { }
+        } finally {}
     }
 
     // Set dati PUNTO DI CONTINUITA' ASSISTENZIALE
@@ -456,7 +454,7 @@ public class StruttureEdottoService {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
             }
 
-        } finally { }
+        } finally {}
     }
 
     // Set dati REPARTO OSPEDALIERO
@@ -493,7 +491,7 @@ public class StruttureEdottoService {
                 struttura.setParent(getStrutturaByCodiceEdottoIstitutoAndStabilimento(codStrutturaIstitutoDiRicovero, progStabilimento).getId());
             }
 
-        } finally { }
+        } finally {}
     }
 
     // Set dati SEDE MEDICINA DEI SERVIZI
@@ -520,7 +518,7 @@ public class StruttureEdottoService {
             }
             struttura.setParent(struttura.getDistretto());
 
-        } finally {    }
+        } finally {}
     }
 
     // Set dati SERVIZIO TERRITORIALE DIPENDENZA PATOLOGICA
@@ -541,7 +539,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
 
-        } finally { }
+        } finally {}
     }
 
     // Set dati SERVIZIO TERRITORIALE PREVENZIONE
@@ -561,7 +559,7 @@ public class StruttureEdottoService {
                     }
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
-        } finally { }
+        } finally {}
     }
 
     // Set dati SERVIZIO TERRITORIALE SALUTE MENTALE
@@ -581,7 +579,7 @@ public class StruttureEdottoService {
                     }
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
-        } finally {  }
+        } finally {}
     }
 
     // Set dati SERVIZIO OSPEDALIERO
@@ -619,7 +617,7 @@ public class StruttureEdottoService {
                 struttura.setParent(getStrutturaByCodiceEdottoIstitutoAndStabilimento(codStruttIstitutoDaRicovero, progStabilimento).getId());
             }
 
-        } finally { }
+        } finally {}
     }
 
     // Set dati RESIDENZA ASSISTENZIALE
@@ -651,7 +649,7 @@ public class StruttureEdottoService {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
             }
 
-        } finally {  }
+        } finally {}
     }
 
     // Set dati STABILIMENTO OSPEDALIERO
@@ -680,7 +678,7 @@ public class StruttureEdottoService {
                 struttura.setParent(getOneByCodiceEdotto(codStruttura).getId());
             }
 
-        } finally {  }
+        } finally {}
     }
 
     // Set dati STRUTTURA RIABILITATIVA PSICHIATRICA
@@ -711,7 +709,7 @@ public class StruttureEdottoService {
             if(progDistretto != null) {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
             }
-        } finally {  }
+        } finally {}
     }
 
     // Set dati STRUTTURA CURE TERMALI
@@ -732,7 +730,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
 
-        } finally { }
+        } finally {}
     }
 
     // Cast da String a LocalDate, formato: "yyyy-MM-dd"

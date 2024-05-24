@@ -30,8 +30,8 @@ public class UtenteController {
             List<UtenteDto> listaUtenti = utenteService.getListaUtenti();
 
             if(listaUtenti.isEmpty()) {
-                logger.error("NotFound-Exception : Lista utenti vuota.");
-                throw new NotFoundException();
+                logger.warn("Lista utenti vuota.");
+                throw new NotFoundException(404, "Lista utenti vuota");
             }
             else return ResponseEntity.ok(listaUtenti);
 
@@ -78,7 +78,7 @@ public class UtenteController {
             }
             else {
                 logger.error("Risorsa non trovata durante cambio stato utente. Id: " + id);
-                throw new NotFoundException();
+                throw new NotFoundException(404, "Utente non trovato");
             }
 
         } catch (Exception ex) {
@@ -94,7 +94,7 @@ public class UtenteController {
         try {
             if(utenteService.getUtenteById(id) == null) {
                 logger.error("Errore durante eliminazione utente. Id: " + id);
-                throw new NotFoundException();
+                throw new NotFoundException(404, "Utente non trovato");
             }
             else {
                 utenteService.eliminazioneUtente(id);

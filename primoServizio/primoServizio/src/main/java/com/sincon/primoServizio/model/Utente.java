@@ -3,21 +3,20 @@ package com.sincon.primoServizio.model;
 import com.querydsl.core.annotations.QueryEntity;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
 @Entity
-@QueryEntity
 @Table(name = "UTENTE", schema = "STRUTTURE")
 @Data
+@QueryEntity
 public class Utente implements Serializable {
 
     @Id
     @Column(name = "ID_UTENTE")
     private Long id;
 
-    @Column(name = "EMAIL", nullable = false, unique = true)
+    @Column(name = "EMAIL")
     private String email;
 
     @Column(name = "PASSWORD", nullable = false)

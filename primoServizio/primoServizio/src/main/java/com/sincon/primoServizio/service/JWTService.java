@@ -27,7 +27,7 @@ public class JWTService {
     }
 
 
-    // Generazione secret key con algoritmo di crittografia HMAC
+    // Generazione SECRET_KEY con algoritmo di crittografia HMAC
     public SecretKey generaHmacSecretKey() {
         byte[] secretBytes = jwtConfig.getSECRET_KEY().getBytes();
 
@@ -53,7 +53,7 @@ public class JWTService {
                 .compact();
     }
 
-    // Recupero i claims dal token
+    // Recupero claims dal token
     public Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(generaHmacSecretKey())

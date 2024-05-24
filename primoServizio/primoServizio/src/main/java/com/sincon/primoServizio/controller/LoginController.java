@@ -47,7 +47,7 @@ public class LoginController {
                    return ResponseEntity.ok().body(token);
                }
             }
-            else throw new NotFoundException();
+            else throw new NotFoundException(404, "Email o password errati");
 
         } catch (Exception ex) {
             logger.error("Errore in fase di login con email: " + email, ex);

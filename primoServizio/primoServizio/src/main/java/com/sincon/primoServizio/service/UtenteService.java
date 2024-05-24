@@ -86,7 +86,7 @@ public class UtenteService {
                 utenteRepository.save(utenteDaModificare);
             } else {
                 logger.error("Errore durante modifica utente.Risorsa non trovata. Id: " + utenteDto.getId());
-                throw new NotFoundException();
+                throw new NotFoundException(404, "Utente non trovato");
             };
         } finally {}
     }

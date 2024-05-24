@@ -31,8 +31,12 @@ spring:
         format_sql: true
 
 logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
   file:
     name: "servizio.log"
+
 
 jwt:
   expiration: 3600000

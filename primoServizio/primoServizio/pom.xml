@@ -45,7 +45,6 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>6.5.0.Final</version>
 		</dependency>
-
 		<!-- ORACLE OJDBC -->
 		<dependency>
 			<groupId>com.oracle.database.jdbc</groupId>
