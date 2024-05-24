@@ -9,6 +9,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DizionarioRepository extends JpaRepository<Dizionario, Integer>, QuerydslPredicateExecutor<Dizionario> {
-
-    Dizionario findByCategoriaAndCodifica(String categoria, String codifica);
 }

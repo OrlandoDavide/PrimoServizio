@@ -2,6 +2,7 @@ package com.sincon.primoServizio.service;
 
 import com.sincon.primoServizio.dto.UtenteDto;
 import com.sincon.primoServizio.exception.NotFoundException;
+import com.sincon.primoServizio.mapperEntityDto.UtenteMapper;
 import com.sincon.primoServizio.model.Utente;
 import com.sincon.primoServizio.repository.UtenteRepository;
 import org.slf4j.Logger;
@@ -11,7 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -20,84 +20,92 @@ public class UtenteService {
     private static final Logger logger = LoggerFactory.getLogger(UtenteService.class);
     private final UtenteRepository utenteRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final UtenteMapper utenteMapper;
 
     @Autowired
     public UtenteService(UtenteRepository utenteRepository,
-                         BCryptPasswordEncoder passwordEncoder) {
+                         BCryptPasswordEncoder passwordEncoder,
+                         UtenteMapper utenteMapper) {
         this.utenteRepository = utenteRepository;
         this.passwordEncoder = passwordEncoder;
+        this.utenteMapper = utenteMapper;
     }
 
     // Find utente by ID
     @Transactional
-    public Utente getUtenteById(Long id) {
-        return utenteRepository.findUtenteById(id);
+    public UtenteDto getUtenteById(Long id) throws NotFoundException {
+        try {
+            Utente utente = utenteRepository.findUtenteById(id);
+
+            return utenteMapper.utenteToUtenteDto(utente);
+        } finally {}
     }
 
     // Find utente by EMAIL
     @Transactional
-    public Utente getUtenteByEmail(String email) throws NotFoundException, SQLException {
-        return utenteRepository.findUtenteByEmail(email);
+    public Utente getUtenteByEmail(String email) throws NotFoundException {
+        try {
+            return utenteRepository.findUtenteByEmail(email);
+        } finally {}
     }
 
+    // GET lista utenti
     @Transactional
-    public List<UtenteDto> getListaUtenti() {
-        return utenteRepository.findAllDto();
+    public List<UtenteDto> getListaUtenti() throws NotFoundException {
+        try {
+            return utenteRepository.findAllDto();
+        } finally {}
     }
 
     // Registra utente
     @Transactional
-    public void registraUtente(Utente utente) throws SQLException {
-        Utente utenteRegistrato = new Utente();
+    public void registraUtente(UtenteDto utenteDto) {
+        try {
+            Utente nuovoUtente = new Utente();
+            nuovoUtente.setEmail(utenteDto.getEmail());
+            nuovoUtente.setAttivo(utenteDto.isAttivo());
 
-        utenteRegistrato.setEmail(utente.getEmail());
-        utenteRegistrato.setAttivo(utente.isAttivo());
+            String criptedPassword = passwordEncoder.encode(utenteDto.getPassword());
+            nuovoUtente.setPassword(criptedPassword);
 
-        String criptedPassword = passwordEncoder.encode(utente.getPassword());
-        utenteRegistrato.setPassword(criptedPassword);
-
-        utenteRepository.save(utenteRegistrato);
+            utenteRepository.save(nuovoUtente);
+        } finally {}
     }
 
     // Modifica utente
     @Transactional
-    public void modificaUtente(Utente utente) throws NotFoundException {
-        Utente utenteEsistente = utenteRepository.findUtenteById(utente.getId());
-        if(utenteEsistente != null) {
-            utenteEsistente.setEmail(utente.getEmail());
-            utenteEsistente.setPassword(utente.getPassword());
-            utenteEsistente.setAttivo(utente.isAttivo());
+    public void modificaUtente(UtenteDto utenteDto) throws NotFoundException {
+        try {
+            Utente utenteDaModificare = utenteRepository.findUtenteById(utenteDto.getId());
 
-            utenteRepository.save(utenteEsistente);
-        }
+            if (utenteDaModificare != null) {
+                utenteDaModificare.setEmail(utenteDto.getEmail());
+                utenteDaModificare.setPassword(utenteDto.getPassword());
+                utenteDaModificare.setAttivo(utenteDto.isAttivo());
+
+                utenteRepository.save(utenteDaModificare);
+            } else {
+                logger.error("Errore durante modifica utente.Risorsa non trovata. Id: " + utenteDto.getId());
+                throw new NotFoundException();
+            };
+        } finally {}
     }
 
     // Cancellazione logica utente
     @Transactional
-    public boolean cancellazioneLogicaUtente(Long id) throws SQLException, NotFoundException {
+    public void cambioStatoUtente(Long id) throws NotFoundException {
         Utente utente = utenteRepository.findUtenteById(id);
+        boolean statoUtente = utente.isAttivo();
+        utente.setAttivo(!statoUtente);
 
-        if(utente != null) {
-            utente.setAttivo(false);
-
-            utenteRepository.save(utente);
-
-            return true;
-        } else {
-            return false;
-        }
+        utenteRepository.save(utente);
     }
 
     // Eliminazione utente
-    public boolean eliminazioneUtente(Long id) throws SQLException, NotFoundException{
-        Utente utenteDaEliminare = utenteRepository.findUtenteById(id);
-
-        if(utenteDaEliminare != null) {
+    public void eliminazioneUtente(Long id) throws NotFoundException {
+        try {
+            Utente utenteDaEliminare = utenteRepository.findUtenteById(id);
             utenteRepository.delete(utenteDaEliminare);
-
-            return true;
-        } else {
-            return false;
-        }
+        } finally {}
     }
 }

@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.SQLException;
-
 @RestController
 public class LoginController {
 
@@ -35,13 +33,12 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody String email, @RequestBody String password) throws SQLException {
+    public ResponseEntity<String> login(@RequestBody String email, @RequestBody String password) {
         try {
             Utente utente = utenteService.getUtenteByEmail(email);
 
             if(utente != null && bCryptPasswordEncoder.matches(password, utente.getPassword())) {
                if(!(utente.isAttivo())) {
-
                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non autorizzato");
                }
                else {
@@ -50,12 +47,12 @@ public class LoginController {
                    return ResponseEntity.ok().body(token);
                }
             }
-            else {
-                throw new NotFoundException();
-            }
-        } catch (SQLException ex) {
-            logger.error("Errore SQL durante fase di LOGIN", ex);
-            throw new SQLException();
+            else throw new NotFoundException();
+
+        } catch (Exception ex) {
+            logger.error("Errore in fase di login con email: " + email, ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Errore in fase di login");
         }
     }
 }

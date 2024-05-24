@@ -82,13 +82,7 @@ public class StruttureEdottoService {
             if(codTipologiaStruttura != null && !(codTipologiaStruttura.isBlank())) {
                 struttura.setTipologiaEdotto(getDizionarioByCodifica(codTipologiaStruttura, "TIPOLOGIA_EDOTTO").getId());
             }
-        } finally {
-            try {
-                datiGeneraliStruttura.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally {  }
     }
 
     // Set ASL
@@ -130,13 +124,7 @@ public class StruttureEdottoService {
             if(codifica != null && !(codifica.isBlank())) {
                 asl.setTipologiaGiuridica(getDizionarioByCodifica(codifica, "TIPO_GIURIDICA").getId());
             }
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally {  }
     }
 
     // Set AUDIT
@@ -195,13 +183,7 @@ public class StruttureEdottoService {
             if(codifica != null && !(codifica.isBlank())) {
                 distretto.setTipologiaGiuridica(getDizionarioByCodifica(codifica, "TIPO_GIURIDICA").getId());
             }
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally {  }
     }
 
     // Set TIPOLOGIA ISTITUTO DI RICOVERO
@@ -267,14 +249,7 @@ public class StruttureEdottoService {
             if(struttura.getTipologiaEdotto() != 2 && struttura.getTipologiaEdotto() != 3) {
                 struttura.setParent(struttura.getAsl());
             }
-        } finally {
-
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally {  }
     }
 
     // Set dati FARMACIA
@@ -303,13 +278,7 @@ public class StruttureEdottoService {
             if(progDistretto != null) {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
             }
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally {  }
     }
 
     // Set dati AMBULATORIO SPECIALISTICO
@@ -341,14 +310,7 @@ public class StruttureEdottoService {
            if(progDistretto != null) {
                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
            }
-       } finally {
-
-           try {
-               streamReader.close();
-           } catch (XMLStreamException e) {
-               logger.warn("Errore durante la chiusura di XML stream", e);
-           }
-       }
+       } finally {  }
     }
 
     // Set dati STRUTTURA HOSPICE
@@ -374,14 +336,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             struttura.setParent(struttura.getAsl());
-        } finally {
-
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally { }
     }
 
     // Set dati ISTITUTO PENITENZIARIO
@@ -402,13 +357,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
 
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally {  }
     }
 
     // Set dati OSPEDALE DI COMUNITA'
@@ -429,13 +378,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
 
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally { }
     }
 
     // Set dati POSTAZIONE EMERGENZA SANITARIA
@@ -461,15 +404,7 @@ public class StruttureEdottoService {
             if(progDistretto != null) {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
             }
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XMl stream", e);
-            }
-        }
-
-
+        } finally {  }
     }
 
     // Set dati STRUTTURA SPECIALISTICA
@@ -491,13 +426,7 @@ public class StruttureEdottoService {
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             struttura.setParent(struttura.getAsl());
 
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally { }
     }
 
     // Set dati PUNTO DI CONTINUITA' ASSISTENZIALE
@@ -524,13 +453,7 @@ public class StruttureEdottoService {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
             }
 
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally { }
     }
 
     // Set dati REPARTO OSPEDALIERO
@@ -567,13 +490,7 @@ public class StruttureEdottoService {
                 struttura.setParent(getStrutturaByCodiceEdottoIstitutoAndStabilimento(codStrutturaIstitutoDiRicovero, progStabilimento).getId());
             }
 
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XMl stream", e);
-            }
-        }
+        } finally { }
     }
 
     // Set dati SEDE MEDICINA DEI SERVIZI
@@ -600,13 +517,7 @@ public class StruttureEdottoService {
             }
             struttura.setParent(struttura.getDistretto());
 
-        } finally {
-          try {
-              streamReader.close();
-          } catch (XMLStreamException e) {
-              logger.warn("Errore durante la chiusura di XML stream", e);
-          }
-        }
+        } finally {    }
     }
 
     // Set dati SERVIZIO TERRITORIALE DIPENDENZA PATOLOGICA
@@ -627,13 +538,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
 
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally { }
     }
 
     // Set dati SERVIZIO TERRITORIALE PREVENZIONE
@@ -653,13 +558,7 @@ public class StruttureEdottoService {
                     }
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally { }
     }
 
     // Set dati SERVIZIO TERRITORIALE SALUTE MENTALE
@@ -679,13 +578,7 @@ public class StruttureEdottoService {
                     }
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally {  }
     }
 
     // Set dati SERVIZIO OSPEDALIERO
@@ -723,13 +616,7 @@ public class StruttureEdottoService {
                 struttura.setParent(getStrutturaByCodiceEdottoIstitutoAndStabilimento(codStruttIstitutoDaRicovero, progStabilimento).getId());
             }
 
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally { }
     }
 
     // Set dati RESIDENZA ASSISTENZIALE
@@ -761,13 +648,7 @@ public class StruttureEdottoService {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
             }
 
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally {  }
     }
 
     // Set dati STABILIMENTO OSPEDALIERO
@@ -796,13 +677,7 @@ public class StruttureEdottoService {
                 struttura.setParent(getOneByCodiceEdotto(codStruttura).getId());
             }
 
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally {  }
     }
 
     // Set dati STRUTTURA RIABILITATIVA PSICHIATRICA
@@ -833,13 +708,7 @@ public class StruttureEdottoService {
             if(progDistretto != null) {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
             }
-        } finally {
-            try {
-                streamReader.close();
-            } catch (XMLStreamException e) {
-                logger.warn("Errore durante la chiusura di XML stream", e);
-            }
-        }
+        } finally {  }
     }
 
     // Set dati STRUTTURA CURE TERMALI
@@ -860,13 +729,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
 
-        } finally {
-          try {
-              streamReader.close();
-          } catch (XMLStreamException e) {
-              logger.warn("Errore durante la chiusura di XML stream", e);
-          }
-        }
+        } finally { }
     }
 
     // Cast da String a LocalDate, formato: "yyyy-MM-dd"

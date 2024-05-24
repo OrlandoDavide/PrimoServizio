@@ -23,6 +23,6 @@ public class Utente implements Serializable {
     @Column(name = "PASSWORD", nullable = false)
     private String password;
 
-    @Column(name = "ATTIVO", columnDefinition = "boolean default true")
+    @Column(name = "ATTIVO")
     private boolean attivo = true;
 }
