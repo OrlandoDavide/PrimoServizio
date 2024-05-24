@@ -22,17 +22,17 @@ public class StruttureEdottoService {
     private static final Logger logger = LoggerFactory.getLogger(StruttureEdottoService.class);
     private final OrgStrutturaRepositoryImpl orgRepositoryImpl;
     private final ComuneRepository comuneRepository;
-    private final DizionarioRepositoryImpl dizionarioRepImpl;
+    private final DizionarioService dizionarioService;
     private Utente utenteInSessione;
 
     @Autowired
     public StruttureEdottoService(OrgStrutturaRepositoryImpl orgRepositoryImpl,
                                   ComuneRepository comuneRepository,
-                                  DizionarioRepositoryImpl dizionarioRepImpl)
+                                  DizionarioService dizionarioService)
     {
         this.orgRepositoryImpl = orgRepositoryImpl;
         this.comuneRepository = comuneRepository;
-        this.dizionarioRepImpl = dizionarioRepImpl;
+        this.dizionarioService = dizionarioService;
     }
 
     // Set dati GENERALI STRUTTURA
@@ -80,7 +80,8 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             if(codTipologiaStruttura != null && !(codTipologiaStruttura.isBlank())) {
-                struttura.setTipologiaEdotto(getDizionarioByCodifica(codTipologiaStruttura, "TIPOLOGIA_EDOTTO").getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioByCodifica(codTipologiaStruttura,
+                                                                                "TIPOLOGIA_EDOTTO").getId());
             }
         } finally {  }
     }
@@ -122,7 +123,8 @@ public class StruttureEdottoService {
             setDatiGeneraliStruttura(asl, streamReader);
 
             if(codifica != null && !(codifica.isBlank())) {
-                asl.setTipologiaGiuridica(getDizionarioByCodifica(codifica, "TIPO_GIURIDICA").getId());
+                asl.setTipologiaGiuridica(dizionarioService.getDizionarioByCodifica(codifica,
+                                                                            "TIPO_GIURIDICA").getId());
             }
         } finally {  }
     }
@@ -181,7 +183,8 @@ public class StruttureEdottoService {
             setAudit(distretto);
             setDatiGeneraliStruttura(distretto, streamReader);
             if(codifica != null && !(codifica.isBlank())) {
-                distretto.setTipologiaGiuridica(getDizionarioByCodifica(codifica, "TIPO_GIURIDICA").getId());
+                distretto.setTipologiaGiuridica(dizionarioService.getDizionarioByCodifica(codifica,
+                                                                                  "TIPO_GIURIDICA").getId());
             }
         } finally {  }
     }
@@ -191,31 +194,31 @@ public class StruttureEdottoService {
         switch (tipoIstituto) {
             case "1":
                 // Presidio ospedaliero
-                struttura.setTipologiaEdotto(this.getDizionario(24023).getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24023).getId());
                 break;
             case "2":
                 // IRCCS pubblico
-                struttura.setTipologiaEdotto(this.getDizionario(24028).getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24028).getId());
                 break;
             case "3":
                 // Azienda ospedaliera
-                struttura.setTipologiaEdotto(this.getDizionario(24029).getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24029).getId());
                 break;
             case "4":
                 // Casa si cura privata accreditata
-                struttura.setTipologiaEdotto(this.getDizionario(24024).getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24024).getId());
                 break;
             case "5":
                 // Casa di cura privata NON accreditata
-                struttura.setTipologiaEdotto(this.getDizionario(24025).getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24025).getId());
                 break;
             case "6":
                 // Ente ecclesiastico
-                struttura.setTipologiaEdotto(this.getDizionario(24026).getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24026).getId());
                 break;
             case "7":
                 // IRCCS privato
-                struttura.setTipologiaEdotto(this.getDizionario(24027).getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24027).getId());
                 break;
         }
     }
@@ -757,16 +760,11 @@ public class StruttureEdottoService {
         return orgRepositoryImpl.findOneByCodiceEdotto(codiceEdotto);
     }
 
-    public Dizionario getDizionarioByCodifica(String codifica, String categoria) {
-        return dizionarioRepImpl.getDizionarioByCodifica(codifica, categoria);
-    }
-
     public OrganigrammaStruttura getDistrettoByProg(int prog, int idAsl) {
         return orgRepositoryImpl.findDistretto(prog, idAsl);
     }
 
-    public Dizionario getDizionario(Integer id) {
-        return dizionarioRepImpl.getDizionarioById(id);
+    public OrganigrammaStruttura findOneByCodiceEdottoOfOriginal(int codiceEdotto) {
+        return orgRepositoryImpl.findOneByCodiceEdottoOfOriginal(codiceEdotto);
     }
-
 }
