@@ -1,15 +1,3 @@
-#spring:
-#  config:
-#    activate:
-#      on-profile: "local"
-#  liquibase:
-#    enabled: false
-#  datasource:
-#    driver-class-name: oracle.jdbc.driver.OracleDriver
-#    username: strutture
-#    password: root
-#    url: jdbc:oracle:thin:@localhost:1521/XEPDB1
-
 spring:
   config:
     activate:
@@ -30,15 +18,19 @@ spring:
         show_sql: true
         format_sql: true
 
-logging:
-  level:
-    root: INFO
-    org.springframework.web: DEBUG
-  file:
-    name: "servizio.log"
-
+#logging:
+#  file:
+#    name: "servizio.log"
+#  level:
+#    root: INFO
+#    org.springframework.web: DEBUG
 
 jwt:
   expiration: 3600000
-  secret-key: "davide-orlandoProva987456321primoServizio741258963753159"
+  secret-key: "davideorlandoProva987456321primoServizio741258963753159"
+
+xml:
+  edotto:
+    path: /Desktop/ANAGRAFE_STRUTTURE_SANITARIE
+    pattern: .*\\.xml$
 

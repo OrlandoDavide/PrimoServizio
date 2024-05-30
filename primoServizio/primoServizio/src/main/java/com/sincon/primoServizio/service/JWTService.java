@@ -21,11 +21,11 @@ public class JWTService {
 
     private static final Logger logger = LoggerFactory.getLogger(JWTService.class);
     private final JwtConfig jwtConfig;
+
     @Autowired
     public JWTService(JwtConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
     }
-
 
     // Generazione SECRET_KEY con algoritmo di crittografia HMAC
     public SecretKey generaHmacSecretKey() {
@@ -36,39 +36,42 @@ public class JWTService {
 
     // Generazione token
     @Transactional
-    public String generaToken(String email) {
+    public String generaToken(String email, Long idUtente) {
         Map<String, String> claims = new HashMap<>();
         claims.put("email", email);
-
-        System.out.println(email);
+        claims.put("id", String.valueOf(idUtente));
 
         return Jwts.builder()
-                .header()
-                .add("typ", "jwt")
-                .and()
-                .claims(claims)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 3600000))
-                .signWith(this.generaHmacSecretKey())
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 ora
+                .signWith(generaHmacSecretKey())
                 .compact();
     }
 
     // Recupero claims dal token
     public Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser()
-                .verifyWith(generaHmacSecretKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(generaHmacSecretKey())
+                    .build()
+                    .parseClaimsJws(token.trim())
+                    .getBody();
+        } catch (JwtException e) {
+            logger.error("Errore durante il parsing del token JWT: " + token, e);
+            throw e;
+        }
     }
 
     // Validazione token
     public boolean validaToken(String token) {
         try {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7).trim();
+            }
             Claims claims = getAllClaimsFromToken(token);
             Date expirationTime = claims.getExpiration();
 
-            System.out.println(expirationTime);
             return expirationTime != null && expirationTime.after(new Date());
         } catch (JwtException e) {
             return false;

@@ -28,7 +28,7 @@ public class JwtTokenTests {
         String SECRET_KEY = "davide-orlandoProva987456321primoServizio741258963753159";
 
         doReturn(SECRET_KEY).when(jwtConfig).getSECRET_KEY();
-        String token = jwtService.generaToken("test@example.it");
+        String token = jwtService.generaToken("test@example.it", 1L);
 
         System.out.println(token);
         assertNotNull(token);
@@ -36,11 +36,11 @@ public class JwtTokenTests {
 
     @Test
     public void jwtService_validaToken_true() {
-        String SECRET_KEY = "davide-orlandoProva987456321primoServizio741258963753159";
+        String SECRET_KEY = "davideorlandoProva987456321primoServizio741258963753159";
 
         doReturn(SECRET_KEY).when(jwtConfig).getSECRET_KEY();
-        String token = jwtService.generaToken("test@example.it");
-
+        String token = jwtService.generaToken("test@example.it", 1L);
+        System.out.println(token);
 
         assertTrue(jwtService.validaToken(token));
     }

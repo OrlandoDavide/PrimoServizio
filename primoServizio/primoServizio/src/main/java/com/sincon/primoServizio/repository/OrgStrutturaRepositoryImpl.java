@@ -7,7 +7,6 @@ import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Objects;
 
 @Repository
 public class OrgStrutturaRepositoryImpl {
@@ -20,27 +19,27 @@ public class OrgStrutturaRepositoryImpl {
     }
 
     public OrganigrammaStruttura findAslByCodiceNSIS(String codNSIS) {
-        return Objects.requireNonNull(queryFactory.select(qOrganigrammaStruttura)
+        return (queryFactory.select(qOrganigrammaStruttura)
                 .from(qOrganigrammaStruttura)
                     .leftJoin(qOrganigrammaStruttura.tipologiaEdotto)
                     .leftJoin(qOrganigrammaStruttura.comune)
                     .where(
                             qOrganigrammaStruttura.codiceNSIS.eq(codNSIS)
-                            .and(qOrganigrammaStruttura.tipologiaEdotto.id.eq(24011))
+                            .and(qOrganigrammaStruttura.tipologiaEdotto.id.eq(24011L))
                     )
                 .fetchOne()
         );
     }
 
-    public OrganigrammaStruttura findDistretto(int prog, int idAsl) {
-        return Objects.requireNonNull(
+    public OrganigrammaStruttura findDistretto(int prog, Long idAsl) {
+        return (
                 queryFactory.select(qOrganigrammaStruttura)
                         .from(qOrganigrammaStruttura)
                         .leftJoin(qOrganigrammaStruttura.tipologiaEdotto)
                         .leftJoin(qOrganigrammaStruttura.asl)
                         .where(
                                 qOrganigrammaStruttura.progDistretto.eq(prog)
-                                .and(qOrganigrammaStruttura.tipologiaEdotto.id.eq(24010)
+                                .and(qOrganigrammaStruttura.tipologiaEdotto.id.eq(24010L)
                                 .and(qOrganigrammaStruttura.asl.id.eq(idAsl)))
                         )
                         .fetchOne()
@@ -48,7 +47,7 @@ public class OrgStrutturaRepositoryImpl {
     }
 
     public OrganigrammaStruttura findOneByCodiceEdotto(int codiceEdotto) {
-        return Objects.requireNonNull(
+        return (
                 queryFactory.select(qOrganigrammaStruttura)
                         .from(qOrganigrammaStruttura)
                         .where(qOrganigrammaStruttura.codiceEdotto.eq(codiceEdotto))
@@ -57,7 +56,7 @@ public class OrgStrutturaRepositoryImpl {
     }
 
     public OrganigrammaStruttura findOneByCodiceEdottoOfOriginal(int codiceEdotto) {
-        return Objects.requireNonNull(
+        return (
                 queryFactory.select(qOrganigrammaStruttura)
                         .from(qOrganigrammaStruttura)
                         .leftJoin(qOrganigrammaStruttura.strutturaOriginale)
@@ -67,12 +66,12 @@ public class OrgStrutturaRepositoryImpl {
     }
 
     public OrganigrammaStruttura findOneByCodiceEdottoGrampaAndStabilimento(int codiceEdottoParent, int stabilimento) {
-        return Objects.requireNonNull(
+        return (
                 queryFactory.select(qOrganigrammaStruttura)
                         .from(qOrganigrammaStruttura)
                         .leftJoin(qOrganigrammaStruttura.parent)
                         .where(
-                                qOrganigrammaStruttura.parent.id.eq(codiceEdottoParent)
+                                qOrganigrammaStruttura.parent.id.eq((long) codiceEdottoParent)
                                 .and(qOrganigrammaStruttura.progStabilimento.eq(stabilimento))
                         )
                         .fetchOne()
@@ -87,12 +86,12 @@ public class OrgStrutturaRepositoryImpl {
     }
 
     public OrganigrammaStruttura findOneByCodiceEdottoAndTipologiaEdotto(int codiceEdotto, int tipologiaEdotto) {
-        return Objects.requireNonNull(
+        return (
                 queryFactory.select(qOrganigrammaStruttura)
                         .from(qOrganigrammaStruttura)
                         .where(
                                 qOrganigrammaStruttura.codiceEdotto.eq(codiceEdotto)
-                                .and(qOrganigrammaStruttura.tipologiaEdotto.id.eq(tipologiaEdotto))
+                                .and(qOrganigrammaStruttura.tipologiaEdotto.id.eq((long) tipologiaEdotto))
                         )
                         .fetchOne()
         );

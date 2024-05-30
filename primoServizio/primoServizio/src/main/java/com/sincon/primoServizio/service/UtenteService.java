@@ -1,10 +1,12 @@
 package com.sincon.primoServizio.service;
 
 import com.sincon.primoServizio.dto.UtenteDto;
+import com.sincon.primoServizio.exception.DuplicateResourceException;
 import com.sincon.primoServizio.exception.NotFoundException;
 import com.sincon.primoServizio.mapperEntityDto.UtenteMapper;
 import com.sincon.primoServizio.model.Utente;
 import com.sincon.primoServizio.repository.UtenteRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +34,15 @@ public class UtenteService {
     }
 
     // Find utente by ID
-    @Transactional
     public UtenteDto getUtenteById(Long id) throws NotFoundException {
         try {
             Utente utente = utenteRepository.findUtenteById(id);
 
-            return utenteMapper.utenteToUtenteDto(utente);
+            return utenteMapper.utenteEntityToDto(utente);
         } finally {}
     }
 
     // Find utente by EMAIL
-    @Transactional
     public Utente getUtenteByEmail(String email) throws NotFoundException {
         try {
             return utenteRepository.findUtenteByEmail(email);
@@ -53,7 +53,8 @@ public class UtenteService {
     @Transactional
     public List<UtenteDto> getListaUtenti() throws NotFoundException {
         try {
-            return utenteRepository.findAllDto();
+            List<Utente> listaUtenti = utenteRepository.findAll();
+            return utenteMapper.listaEntityToDto(listaUtenti);
         } finally {}
     }
 
@@ -61,14 +62,15 @@ public class UtenteService {
     @Transactional
     public void registraUtente(UtenteDto utenteDto) {
         try {
-            Utente nuovoUtente = new Utente();
-            nuovoUtente.setEmail(utenteDto.getEmail());
-            nuovoUtente.setAttivo(utenteDto.isAttivo());
+            Utente nuovoUtente = getUtenteByEmail(utenteDto.getEmail());
+            if(nuovoUtente != null) {
+                throw new DuplicateResourceException(400, String.format("Questa email è già presente nel database: %s", utenteDto.getEmail()));
+            } else {
+                nuovoUtente = utenteMapper.utenteDtoToEntity(utenteDto);
+                nuovoUtente.setPassword(passwordEncoder.encode(utenteDto.getPassword()));
 
-            String criptedPassword = passwordEncoder.encode(utenteDto.getPassword());
-            nuovoUtente.setPassword(criptedPassword);
-
-            utenteRepository.save(nuovoUtente);
+                utenteRepository.save(nuovoUtente);
+            }
         } finally {}
     }
 
@@ -107,5 +109,12 @@ public class UtenteService {
             Utente utenteDaEliminare = utenteRepository.findUtenteById(id);
             utenteRepository.delete(utenteDaEliminare);
         } finally {}
+    }
+
+    // Recupera utente in sessione
+    public UtenteDto getUtenteInSessione(HttpServletRequest request) {
+        String idUtente = String.valueOf(request.getSession().getAttribute("id"));
+
+        return getUtenteById(Long.valueOf(idUtente));
     }
 }

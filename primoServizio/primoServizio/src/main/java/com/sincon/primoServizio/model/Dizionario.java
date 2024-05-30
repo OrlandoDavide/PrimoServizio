@@ -2,6 +2,7 @@ package com.sincon.primoServizio.model;
 
 import com.querydsl.core.annotations.QueryEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Entity
@@ -12,7 +13,9 @@ public class Dizionario {
 
     @Id
     @Column(name = "ID_DIZIONARIO")
-    private int id;
+    @SequenceGenerator(name = "DIZIONARIO_SEQ", sequenceName = "DIZIONARIO_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DIZIONARIO_SEQ")
+    private Long id;
 
     @Column(name = "DENOMINAZIONE")
     private String denominazione;

@@ -7,5 +7,5 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface OrganigrammaStrutturaRepository extends JpaRepository<OrganigrammaStruttura, Integer>, QuerydslPredicateExecutor<QOrganigrammaStruttura> {
+public interface OrganigrammaStrutturaRepository extends JpaRepository<OrganigrammaStruttura, Long>, QuerydslPredicateExecutor<QOrganigrammaStruttura> {
 }

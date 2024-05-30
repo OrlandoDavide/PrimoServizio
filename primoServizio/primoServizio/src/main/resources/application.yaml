@@ -6,6 +6,6 @@ spring:
   liquibase:
     enabled: false
 
-logging:
-  file:
-    name: "servizio.log"
+#logging:
+#  file:
+#    name: "servizio.log"

@@ -1,6 +1,7 @@
 package com.sincon.primoServizio.controller;
 
 import com.sincon.primoServizio.dto.UtenteDto;
+import com.sincon.primoServizio.exception.DuplicateResourceException;
 import com.sincon.primoServizio.exception.NotFoundException;
 import com.sincon.primoServizio.service.UtenteService;
 import org.slf4j.Logger;
@@ -27,15 +28,14 @@ public class UtenteController {
     @GetMapping("/lista")
     public ResponseEntity<?> getListaUtenti() {
         try {
-            List<UtenteDto> listaUtenti = utenteService.getListaUtenti();
+            List<UtenteDto> listaUtentiDto = utenteService.getListaUtenti();
 
-            if(listaUtenti.isEmpty()) {
-                logger.warn("Lista utenti vuota.");
-                throw new NotFoundException(404, "Lista utenti vuota");
+            if(listaUtentiDto.isEmpty()) {
+                return ResponseEntity.status(200).body("La lista utenti è vuota");
             }
-            else return ResponseEntity.ok(listaUtenti);
+            else return ResponseEntity.ok(listaUtentiDto);
 
-        }  catch (Exception ex) {
+        } catch (Exception ex) {
             logger.error("Errore generico per lista utenti", ex);
             return ResponseEntity.status(500).body("Errore imprevisto durante l'operazione.");
         }
@@ -49,16 +49,23 @@ public class UtenteController {
 
             if(utenteDaModificare != null) {
                 utenteService.modificaUtente(utenteDaModificare);
-                return ResponseEntity.ok().body("Utente modificato con successo.");
+                return ResponseEntity.ok()
+                                     .body("Utente modificato con successo.");
 
             } else {
                 utenteService.registraUtente(utenteDto);
-                return ResponseEntity.ok().body("Utente registrato con successo.");
+                return ResponseEntity.ok()
+                                     .body("Utente registrato con successo.");
             }
 
-        }  catch (Exception ex) {
+        } catch (DuplicateResourceException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .body(ex.getMessage());
+        }
+        catch (Exception ex) {
             logger.error("Errore in fase di modifica/registrazione utente", ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore imprevisto durante l'operazione.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("Errore imprevisto durante l'operazione.");
         }
     }
 
@@ -72,17 +79,24 @@ public class UtenteController {
                 utenteService.cambioStatoUtente(id);
 
                 if(utente.isAttivo()) {
-                    return ResponseEntity.ok().body("Utente disattivato con successo.");
+                    return ResponseEntity.ok()
+                                         .body("Utente disattivato con successo.");
                 }
-                else return ResponseEntity.ok().body("Utente attivato con successo.");
+                else return ResponseEntity.ok()
+                                          .body("Utente attivato con successo.");
             }
             else {
-                logger.error("Risorsa non trovata durante cambio stato utente. Id: " + id);
                 throw new NotFoundException(404, "Utente non trovato");
             }
 
+        } catch (NotFoundException ex) {
+            logger.error("Risorsa non trovata durante cambio stato utente. Id: " + id);
+
+            return ResponseEntity.status(404)
+                                 .body(ex.getMessage());
         } catch (Exception ex) {
             logger.error("Errore durante il cambio stato utente con id: " + id, ex);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body("Errore imprevisto durante il cambio stato dell'utente.");
         }
@@ -93,7 +107,6 @@ public class UtenteController {
     public ResponseEntity<String> eliminazioneUtente(@PathVariable Long id) {
         try {
             if(utenteService.getUtenteById(id) == null) {
-                logger.error("Errore durante eliminazione utente. Id: " + id);
                 throw new NotFoundException(404, "Utente non trovato");
             }
             else {
@@ -101,6 +114,9 @@ public class UtenteController {
 
                 return ResponseEntity.ok().body("Utente eliminato con successo.");
             }
+        } catch (NotFoundException ex) {
+            logger.error("Errore durante eliminazione utente. Id: " + id);
+            return ResponseEntity.status(404).body(ex.getMessage());
         } catch (Exception ex) {
             logger.error("Errore in fase di eliminazione utente. ID: " + id, ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

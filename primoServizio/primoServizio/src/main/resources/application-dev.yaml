@@ -3,6 +3,6 @@ spring:
     activate:
       on-profile: "dev"
 
-logging:
-  file:
-    name: "servizio.log"
+#logging:
+#  file:
+#    name: "servizio.log"

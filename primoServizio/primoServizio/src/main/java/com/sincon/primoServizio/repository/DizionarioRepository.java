@@ -6,5 +6,5 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DizionarioRepository extends JpaRepository<Dizionario, Integer>, QuerydslPredicateExecutor<Dizionario> {
+public interface DizionarioRepository extends JpaRepository<Dizionario, Long>, QuerydslPredicateExecutor<Dizionario> {
 }

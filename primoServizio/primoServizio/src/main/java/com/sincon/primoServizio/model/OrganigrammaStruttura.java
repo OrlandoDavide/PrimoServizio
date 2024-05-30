@@ -15,8 +15,9 @@ public class OrganigrammaStruttura {
 
     @Id
     @Column(name = "ID_STRUTTURA")
-    //@GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int id;
+    @SequenceGenerator(name = "ORG_STRUTTURA_SEQ", sequenceName = "ORG_STRUTTURA_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ORG_STRUTTURA_SEQ")
+    private Long id;
 
     @Column(name = "DENOMINAZIONE")
     private String denominazione;
@@ -26,7 +27,7 @@ public class OrganigrammaStruttura {
 
     @ManyToOne(targetEntity = OrganigrammaStruttura.class)
     @JoinColumn(name = "ID_ASL", referencedColumnName = "ID_STRUTTURA")
-    private int asl;
+    private OrganigrammaStruttura asl;
 
     @Column(name = "NOME_TITOLARE")
     private String nomeTitolare;
@@ -51,18 +52,18 @@ public class OrganigrammaStruttura {
 
     @ManyToOne(targetEntity = Dizionario.class)
     @JoinColumn(name = "ID_TIPOLOGIA", referencedColumnName = "ID_DIZIONARIO")
-    private int tipologia;
+    private Dizionario tipologia;
 
     @ManyToOne(targetEntity = OrganigrammaStruttura.class)
     @JoinColumn(name = "ID_PARENT", referencedColumnName = "ID_STRUTTURA")
-    private int parent;
+    private OrganigrammaStruttura parent;
 
     @OneToMany(targetEntity = OrganigrammaStruttura.class, mappedBy = "parent", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<OrganigrammaStruttura> childrens;
 
     @ManyToOne(targetEntity = OrganigrammaStruttura.class)
     @JoinColumn(name = "COD_STRUTTURA_ORIGINALE", referencedColumnName = "ID_STRUTTURA")
-    private int strutturaOriginale;
+    private OrganigrammaStruttura strutturaOriginale;
 
     @Column(name = "ABILITATO")
     private boolean abilitato;
@@ -78,7 +79,7 @@ public class OrganigrammaStruttura {
 
     @ManyToOne(targetEntity = Dizionario.class)
     @JoinColumn(name = "ID_CATEGORIA", referencedColumnName = "ID_DIZIONARIO")
-    private int categoria;
+    private Dizionario categoria;
 
     @Column(name = "CODICE_TS")
     private String codiceTs;
@@ -109,7 +110,7 @@ public class OrganigrammaStruttura {
 
     @ManyToOne(targetEntity = Comune.class)
     @JoinColumn(name = "COD_ISTAT", referencedColumnName = "ISTAT")
-    private String comune;
+    private Comune comune;
 
     @Column(name = "DATA_APERTURA")
     private LocalDate dataApertura;
@@ -122,15 +123,15 @@ public class OrganigrammaStruttura {
 
     @ManyToOne(targetEntity = Dizionario.class)
     @JoinColumn(name = "ID_TIPOLOGIA_GIURIDICA", referencedColumnName = "ID_DIZIONARIO")
-    private int tipologiaGiuridica;
+    private Dizionario tipologiaGiuridica;
 
     @ManyToOne(targetEntity = Dizionario.class)
     @JoinColumn(name = "ID_TIPOLOGIA_EDOTTO", referencedColumnName = "ID_DIZIONARIO")
-    private int tipologiaEdotto;
+    private Dizionario tipologiaEdotto;
 
     @ManyToOne(targetEntity = OrganigrammaStruttura.class)
     @JoinColumn(name = "ID_DISTRETTO", referencedColumnName = "ID_STRUTTURA")
-    private int distretto;
+    private OrganigrammaStruttura distretto;
 
     @Column(name = "PROG_DISTRETTO", length = 11)
     private int progDistretto;

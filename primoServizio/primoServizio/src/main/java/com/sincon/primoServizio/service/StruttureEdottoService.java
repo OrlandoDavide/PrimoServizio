@@ -1,85 +1,120 @@
 package com.sincon.primoServizio.service;
 
+import com.sincon.primoServizio.dto.UtenteDto;
+import com.sincon.primoServizio.model.Comune;
+import com.sincon.primoServizio.model.Dizionario;
 import com.sincon.primoServizio.model.OrganigrammaStruttura;
-import com.sincon.primoServizio.model.Utente;
 import com.sincon.primoServizio.repository.ComuneRepository;
 import com.sincon.primoServizio.repository.OrgStrutturaRepositoryImpl;
+import com.sincon.primoServizio.repository.OrganigrammaStrutturaRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class StruttureEdottoService {
     private static final Logger logger = LoggerFactory.getLogger(StruttureEdottoService.class);
     private final OrgStrutturaRepositoryImpl orgRepositoryImpl;
+    private final OrganigrammaStrutturaRepository strutturaRepository;
     private final ComuneRepository comuneRepository;
     private final DizionarioService dizionarioService;
-    private Utente utenteInSessione;
+    private final UtenteService utenteService;
 
     @Autowired
     public StruttureEdottoService(OrgStrutturaRepositoryImpl orgRepositoryImpl,
+                                  OrganigrammaStrutturaRepository strutturaRepository,
                                   ComuneRepository comuneRepository,
-                                  DizionarioService dizionarioService)
+                                  DizionarioService dizionarioService,
+                                  UtenteService utenteService)
     {
         this.orgRepositoryImpl = orgRepositoryImpl;
+        this.strutturaRepository = strutturaRepository;
         this.comuneRepository = comuneRepository;
         this.dizionarioService = dizionarioService;
+        this.utenteService = utenteService;
+    }
+
+    public boolean salvaStruttura(OrganigrammaStruttura struttura) {
+        if (struttura != null) {
+            strutturaRepository.save(struttura);
+
+            return true;
+        } else return false;
     }
 
     // Set dati GENERALI STRUTTURA
-    public void setDatiGeneraliStruttura(OrganigrammaStruttura struttura, XMLStreamReader datiGeneraliStruttura) throws XMLStreamException {
+    public void setDatiGeneraliStruttura(OrganigrammaStruttura struttura, XMLStreamReader streamReader) throws XMLStreamException {
         String codTipologiaStruttura = null;
         int evento;
         String tag = "";
 
+        logger.info("STO SETTANDO I DATI GENERALI");
         try {
             do {
-                evento = datiGeneraliStruttura.next();
+                evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if (evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiGeneraliStruttura")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
-                    tag = datiGeneraliStruttura.getLocalName();
-
                     switch (tag) {
                         case "denominazione" :
-                            struttura.setDenominazione(datiGeneraliStruttura.getElementText());
+                            struttura.setDenominazione(streamReader.getElementText());
                             break;
                         case "codCAP" :
-                            struttura.setCodCap(datiGeneraliStruttura.getElementText());
+                            struttura.setCodCap(streamReader.getElementText());
+                            break;
+                        case "email" :
+                            struttura.setEmailTitolare(streamReader.getElementText());
+                            break;
+                        case "codice" :
+                            struttura.setCodiceEdotto(Integer.parseInt(streamReader.getElementText()));
                             break;
                         case "comune" :
-                            if(comuneRepository.findByCodiceIstat(datiGeneraliStruttura.getElementText()) != null) {
-                                struttura.setComune(datiGeneraliStruttura.getElementText());
-                            } else {
-                                struttura.setComune(null);
-                            }
+                            Comune comune = comuneRepository.findByCodiceIstat(streamReader.getElementText()) != null ? comuneRepository.findByCodiceIstat(streamReader.getElementText()) : null;
+                            struttura.setComune(comune);
                             break;
                         case "codTipologiaStruttura" :
-                            codTipologiaStruttura = datiGeneraliStruttura.getElementText();
+                            codTipologiaStruttura = streamReader.getElementText();
                             break;
                         case "dataIstituzione" :
-                            LocalDate dataAttivazione = parseStringToLocalDate(datiGeneraliStruttura.getElementText());
+                            LocalDate dataAttivazione = parseStringToLocalDate(streamReader.getElementText());
 
                             struttura.setDataAttivazione(dataAttivazione);
                             struttura.setDataApertura(dataAttivazione);
                             break;
                         case "dataChiusura" :
-                            LocalDate dataChiusura = parseStringToLocalDate(datiGeneraliStruttura.getElementText());
+                            LocalDate dataChiusura = parseStringToLocalDate(streamReader.getElementText());
 
                             struttura.setDataChiusura(dataChiusura);
                             break;
                     }
                 }
-            } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
-            if(codTipologiaStruttura != null && !(codTipologiaStruttura.isBlank())) {
-                struttura.setTipologiaEdotto(dizionarioService.getDizionarioByCodifica(codTipologiaStruttura,
-                                                                                "TIPOLOGIA_EDOTTO").getId());
+            } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiGeneraliStruttura")));
+
+            struttura.setAbilitato(true);
+            Dizionario dizionario = dizionarioService.getDizionarioByCodifica(codTipologiaStruttura,"TIPOLOGIA_EDOTTO");
+            if(dizionario != null) {
+                struttura.setTipologiaEdotto(dizionario);
             }
         } finally {}
     }
@@ -87,28 +122,36 @@ public class StruttureEdottoService {
     // Set ASL
     @Transactional
      public void setAsl(OrganigrammaStruttura asl, XMLStreamReader streamReader) throws XMLStreamException {
-        String codifica = null;
         int evento;
         String tag = "";
+        logger.info("STO SETTANDO L'ASL");
+        String codifica = null;
 
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
-                    tag = streamReader.getLocalName();
-
                     switch (tag) {
                         case "codNazionale":
+                            //codiceNSIS = streamReader.getElementText();
                             asl.setCodiceNSIS(streamReader.getElementText());
                             break;
                         case "email" :
+                            //email = streamReader.getElementText();
                             asl.setEmailTitolare(streamReader.getElementText());
                             break;
                         case "telefono" :
+                            //telefono = streamReader.getElementText();
                             asl.setTelefonoTitolare(streamReader.getElementText());
                             break;
                         case "partitaIVA" :
+                            //partitaIVA = streamReader.getElementText();
                             asl.setCodice(streamReader.getElementText());
                             break;
                         case "codTipologiaGiuridica" :
@@ -116,26 +159,31 @@ public class StruttureEdottoService {
                             break;
                     }
                 }
-            } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
-            setAudit(asl);
-            setDatiGeneraliStruttura(asl, streamReader);
+            } while (evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria"));
+            //setAudit(asl);
+            //asl.setAsl(true);
 
             if(codifica != null && !(codifica.isBlank())) {
-                asl.setTipologiaGiuridica(dizionarioService.getDizionarioByCodifica(codifica,
-                                                                            "TIPO_GIURIDICA").getId());
+                Dizionario dizionario = dizionarioService.getDizionarioByCodifica(codifica,"TIPO_GIURIDICA");
+
+                if(dizionario != null) {
+                    asl.setTipologiaEdotto(dizionario);
+                }
             }
         } finally {}
     }
 
     // Set AUDIT
-    public void setAudit(OrganigrammaStruttura struttura) {
+    public void setAudit(OrganigrammaStruttura struttura, HttpServletRequest request) {
+        UtenteDto utenteInSessione = utenteService.getUtenteInSessione(request);
+
         if(struttura.getId() < 1) {
             struttura.setCreatedDate(LocalDate.now());
-            struttura.setCreatedBy(Math.toIntExact(utenteInSessione.getId()));
+            struttura.setCreatedBy((int) utenteInSessione.getId());
             //todo struttura.setCreatedWith();
         } else {
             struttura.setModifiedDate(LocalDate.now());
-            struttura.setModifiedBy(Math.toIntExact(utenteInSessione.getId()));
+            struttura.setModifiedBy((int) utenteInSessione.getId());
             //todo struttura.setModifiedWith();
         }
     }
@@ -149,10 +197,13 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
-                    tag = streamReader.getLocalName().trim();
-
                     switch (tag) {
                         case "partitaIVA" :
                             distretto.setCodice(streamReader.getElementText().trim());
@@ -171,20 +222,23 @@ public class StruttureEdottoService {
                             distretto.setTelefonoTitolare(streamReader.getElementText().trim());
                             break;
                         case "codNazionaleASLAppartenenzaTerritoriale" :
-                            distretto.setAsl(findAslByCodice(streamReader.getElementText().trim()));
+                            OrganigrammaStruttura asl = findAslByCodice(streamReader.getElementText().trim()) != null ? findAslByCodice(streamReader.getElementText().trim()) : null;
+                            distretto.setAsl(asl);
                             distretto.setParent(distretto.getAsl());
                             break;
                     }
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
 
-            setAudit(distretto);
-            setDatiGeneraliStruttura(distretto, streamReader);
+            //setAudit(distretto);
             if(codifica != null && !(codifica.isBlank())) {
-                distretto.setTipologiaGiuridica(dizionarioService.getDizionarioByCodifica(codifica,
-                                                                                  "TIPO_GIURIDICA").getId());
+                distretto.setTipologiaGiuridica(dizionarioService.getDizionarioByCodifica(codifica, "TIPO_GIURIDICA"));
             }
         } finally {}
+    }
+
+    public void setStruttura(OrganigrammaStruttura struttura, XMLStreamReader streamReader) {
+
     }
 
     // Set TIPOLOGIA ISTITUTO DI RICOVERO
@@ -192,31 +246,31 @@ public class StruttureEdottoService {
         switch (tipoIstituto) {
             case "1":
                 // Presidio ospedaliero
-                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24023).getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24023L));
                 break;
             case "2":
                 // IRCCS pubblico
-                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24028).getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24028L));
                 break;
             case "3":
                 // Azienda ospedaliera
-                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24029).getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24029L));
                 break;
             case "4":
                 // Casa si cura privata accreditata
-                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24024).getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24024L));
                 break;
             case "5":
                 // Casa di cura privata NON accreditata
-                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24025).getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24025L));
                 break;
             case "6":
                 // Ente ecclesiastico
-                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24026).getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24026L));
                 break;
             case "7":
                 // IRCCS privato
-                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24027).getId());
+                struttura.setTipologiaEdotto(dizionarioService.getDizionarioById(24027L));
                 break;
         }
     }
@@ -229,6 +283,12 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName();
@@ -244,10 +304,19 @@ public class StruttureEdottoService {
                         case "codiceHSP11" :
                             struttura.setCodiceHsp11(streamReader.getElementText());
                             break;
+                        case "codTipologiaGiuridica" :
+                            struttura.setTipologiaGiuridica(dizionarioService.getDizionarioByCodifica(streamReader.getElementText(),"TIPO_GIURIDICA"));
+                            break;
+                        case "codNazionaleASLAppartenenzaTerritoriale" :
+                            struttura.setAsl(findAslByCodice(streamReader.getElementText()));
+                            struttura.setParent(struttura.getAsl());
+                            break;
+                        case "datiFarmacia" :
+
                     }
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
-            if(struttura.getTipologiaEdotto() != 2 && struttura.getTipologiaEdotto() != 3) {
+            if(struttura.getTipologiaEdotto().getId() != 2 && struttura.getTipologiaEdotto().getId() != 3) {
                 struttura.setParent(struttura.getAsl());
             }
         } finally {}
@@ -277,7 +346,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             if(progDistretto != null) {
-                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
+                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl().getId()));
             }
         } finally {}
     }
@@ -309,7 +378,7 @@ public class StruttureEdottoService {
            struttura.setParent(struttura.getDistretto());
 
            if(progDistretto != null) {
-               struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
+               struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl().getId()));
            }
        } finally {}
     }
@@ -403,7 +472,7 @@ public class StruttureEdottoService {
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             struttura.setParent(struttura.getDistretto());
             if(progDistretto != null) {
-                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
+                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl().getId()));
             }
         } finally {}
     }
@@ -451,7 +520,7 @@ public class StruttureEdottoService {
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             struttura.setParent(struttura.getDistretto());
             if(progDistretto != null) {
-                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
+                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl().getId()));
             }
 
         } finally {}
@@ -488,7 +557,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             if(codStrutturaIstitutoDiRicovero != null && progStabilimento != null) {
-                struttura.setParent(getStrutturaByCodiceEdottoIstitutoAndStabilimento(codStrutturaIstitutoDiRicovero, progStabilimento).getId());
+                struttura.setParent(getStrutturaByCodiceEdottoIstitutoAndStabilimento(codStrutturaIstitutoDiRicovero, progStabilimento));
             }
 
         } finally {}
@@ -514,7 +583,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             if(progDistretto != null) {
-                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
+                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl().getId()));
             }
             struttura.setParent(struttura.getDistretto());
 
@@ -614,7 +683,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             if(codStruttIstitutoDaRicovero != null && progStabilimento != null) {
-                struttura.setParent(getStrutturaByCodiceEdottoIstitutoAndStabilimento(codStruttIstitutoDaRicovero, progStabilimento).getId());
+                struttura.setParent(getStrutturaByCodiceEdottoIstitutoAndStabilimento(codStruttIstitutoDaRicovero, progStabilimento));
             }
 
         } finally {}
@@ -646,7 +715,7 @@ public class StruttureEdottoService {
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             struttura.setParent(struttura.getDistretto());
             if(progDistretto != null) {
-                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
+                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl().getId()));
             }
 
         } finally {}
@@ -675,7 +744,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             if(codStruttura != null) {
-                struttura.setParent(getOneByCodiceEdotto(codStruttura).getId());
+                struttura.setParent(findOneByCodiceEdotto(codStruttura));
             }
 
         } finally {}
@@ -707,7 +776,7 @@ public class StruttureEdottoService {
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             struttura.setParent(struttura.getDistretto());
             if(progDistretto != null) {
-                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl()).getId());
+                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl().getId()));
             }
         } finally {}
     }
@@ -746,23 +815,135 @@ public class StruttureEdottoService {
         return false;
     }
 
-    public int findAslByCodice(String codNSIS) {
-        return orgRepositoryImpl.findAslByCodiceNSIS(codNSIS).getId();
+    public OrganigrammaStruttura findAslByCodice(String codNSIS) {
+        return orgRepositoryImpl.findAslByCodiceNSIS(codNSIS);
     }
 
     public OrganigrammaStruttura getStrutturaByCodiceEdottoIstitutoAndStabilimento(int codiceEdottoIstituto, int stabilimento) {
         return orgRepositoryImpl.findOneByCodiceEdottoGrampaAndStabilimento(codiceEdottoIstituto, stabilimento);
     }
 
-    public OrganigrammaStruttura getOneByCodiceEdotto(int codiceEdotto) {
+    public OrganigrammaStruttura findOneByCodiceEdotto(int codiceEdotto) {
         return orgRepositoryImpl.findOneByCodiceEdotto(codiceEdotto);
     }
 
-    public OrganigrammaStruttura getDistrettoByProg(int prog, int idAsl) {
+    public OrganigrammaStruttura getDistrettoByProg(int prog, Long idAsl) {
         return orgRepositoryImpl.findDistretto(prog, idAsl);
     }
 
     public OrganigrammaStruttura findOneByCodiceEdottoOfOriginal(int codiceEdotto) {
         return orgRepositoryImpl.findOneByCodiceEdottoOfOriginal(codiceEdotto);
+    }
+
+    public void identificaAndElaboraStruttura(OrganigrammaStruttura struttura, Path xmlStruttura) throws XMLStreamException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(xmlStruttura.toFile()))) {
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            XMLStreamReader streamReader = inputFactory.createXMLStreamReader(reader);
+
+            int evento;
+            String tag = "";
+
+            do {
+                evento = streamReader.next();
+
+                if(evento == XMLStreamReader.START_ELEMENT) {
+                    tag = streamReader.getLocalName();
+
+                    if(tag.equalsIgnoreCase("datiFarmacia")) {
+                        if(struttura.getAsl() == null) {
+                            throw new IOException("ERRORE ASL");
+                        }
+
+                    }
+                }
+
+
+            } while(streamReader.hasNext());
+
+        } catch (XMLStreamException | IOException e) {
+            throw new XMLStreamException(e.getMessage());
+        }
+    }
+
+    // GET fileXML by TIPOLOGIA
+    public Optional<Path> trovaXmlByTipologiaStruttura(Path cartellaEdotto, String tipologia) throws IOException {
+        try(Stream<Path> stream = Files.list(cartellaEdotto)) {
+            return stream
+                    .filter(path -> {
+                        logger.info("File trovato: " + path.getFileName());
+                        try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
+                            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+                            XMLStreamReader streamReader = inputFactory.createXMLStreamReader(reader);
+
+                            while (streamReader.hasNext()) {
+                                int evento = streamReader.next();
+
+                                if(evento == XMLStreamReader.START_ELEMENT && streamReader.getLocalName().equalsIgnoreCase("codTipologiaStruttura")) {
+                                    String tipologiaFile = streamReader.getElementText().trim();
+                                    logger.info("Trovata codTipologiaStruttura: " + tipologiaFile);
+
+                                    if(tipologiaFile.equalsIgnoreCase(tipologia)) {
+                                        return true;
+                                    }
+                                } else if (evento == XMLStreamReader.END_ELEMENT && streamReader.getLocalName().equalsIgnoreCase("datiStrutturaSanitaria")) {
+                                    break;
+                                }
+                            }
+                        } catch (Exception e) {
+                            logger.error("Errore durante il recupero dell'XML per tipologia: " + e);
+                        }
+                        return false;
+                    })
+                    .findFirst();
+        } catch (IOException e) {
+            throw new IOException();
+        }
+    }
+
+    private void logEvent(XMLStreamReader reader, int event) {
+        switch (event) {
+            case XMLStreamReader.START_ELEMENT:
+                logger.info("START_ELEMENT: " + reader.getLocalName());
+                break;
+            case XMLStreamReader.END_ELEMENT:
+                logger.info("END_ELEMENT: " + reader.getLocalName());
+                break;
+            case XMLStreamReader.CHARACTERS:
+                logger.info("CHARACTERS: " + reader.getText().trim());
+                break;
+            default:
+                logger.info("EVENT: " + event);
+        }
+    }
+
+    public void racchiudiDatiSanitari(XMLStreamReader reader, XMLStreamWriter writer) throws XMLStreamException {
+        int evento;
+        String tag = "";
+
+        do {
+            evento = reader.next();
+
+            switch (evento) {
+                case XMLStreamReader.START_ELEMENT:
+                    tag = reader.getLocalName().trim();
+                    writer.writeStartElement(tag);
+                    int attributeCount = reader.getAttributeCount();
+                    if (attributeCount > 0) {
+                        for (int i = 0; i < attributeCount; i++) {
+                            logger.info("Attributo " + i + ": " + reader.getAttributeLocalName(i) + " = " + reader.getAttributeValue(i));
+                            writer.writeAttribute(reader.getAttributeLocalName(i), reader.getAttributeValue(i));
+                        }
+                    }
+                    break;
+                case XMLStreamReader.CHARACTERS:
+                    writer.writeCharacters(reader.getText().trim());
+                    break;
+                case XMLStreamReader.END_ELEMENT:
+                    tag = reader.getLocalName().trim();
+                    logger.info("end element: " + tag);
+                    writer.writeEndElement();
+                    break;
+            }
+        } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
     }
 }

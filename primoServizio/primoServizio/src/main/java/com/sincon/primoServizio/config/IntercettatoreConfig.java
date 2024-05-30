@@ -21,6 +21,7 @@ public class IntercettatoreConfig implements WebMvcConfigurer {
         registry.addInterceptor(new Intercettatore(jwtService))
                 .addPathPatterns("/**")
                 .excludePathPatterns(
+                        "/strutture/aggiorna-edotto",
                          "/public/**",
                          "/login"
                  );

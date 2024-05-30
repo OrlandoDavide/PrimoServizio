@@ -1,6 +1,7 @@
 package com.sincon.primoServizio;
 
 import com.sincon.primoServizio.config.ApplicationConfig.JwtConfig;
+import com.sincon.primoServizio.config.ApplicationConfig.XMLConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -12,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EntityScan(basePackages = "com.sincon.primoServizio.model")
 @EnableJpaRepositories(basePackages = "com.sincon.primoServizio.repository")
-@EnableConfigurationProperties(JwtConfig.class)
+@EnableConfigurationProperties({JwtConfig.class})
 public class PrimoServizioApplication {
 
 	public static void main(String[] args) {

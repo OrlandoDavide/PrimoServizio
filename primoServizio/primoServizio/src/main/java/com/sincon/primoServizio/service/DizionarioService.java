@@ -22,7 +22,7 @@ public class DizionarioService {
     }
 
     // GET dizionario by ID
-    public Dizionario getDizionarioById(int id) {
+    public Dizionario getDizionarioById(Long id) {
         try {
             return dizionarioRepoImpl.getDizionarioById(id);
         } finally {}

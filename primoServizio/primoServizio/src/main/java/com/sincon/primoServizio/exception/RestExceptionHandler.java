@@ -1,7 +1,6 @@
 package com.sincon.primoServizio.exception;
 
 import com.sincon.primoServizio.model.ErrorResponse;
-import com.sincon.primoServizio.service.UtenteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -38,5 +37,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         errore.setMessage(ex.getMessage());
 
         return new ResponseEntity<>(errore, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public final ResponseEntity<ErrorResponse> DuplicateEmailHandlerException(DuplicateResourceException ex) {
+        ErrorResponse errore = new ErrorResponse();
+        errore.setStatusCode(ex.getStatusCode());
+        errore.setMessage(ex.getMessage());
+
+        return new ResponseEntity<>(errore, HttpStatus.BAD_REQUEST);
     }
 }

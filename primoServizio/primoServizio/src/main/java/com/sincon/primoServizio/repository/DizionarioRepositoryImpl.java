@@ -25,7 +25,7 @@ public class DizionarioRepositoryImpl {
                 .fetchOne();
     }
 
-    public Dizionario getDizionarioById(int id) {
+    public Dizionario getDizionarioById(Long id) {
         return queryFactory.selectFrom(qDizionario)
                 .where(qDizionario.id.eq(id))
                 .fetchOne();

@@ -1,6 +1,5 @@
 package com.sincon.primoServizio.dto;
 
-import com.sincon.primoServizio.model.OrganigrammaStruttura;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +12,7 @@ public class OrganigrammaStrutturaDto {
     private Long id;
     private String denominazione;
     private String codice;
-    private int asl;
+    private OrganigrammaStrutturaDto asl;
     private String nomeTitolare;
     private String cognomeTitolare;
     private String emailTitolare;
@@ -21,15 +20,15 @@ public class OrganigrammaStrutturaDto {
     private String nomeReferente;
     private String cognomeReferente;
     private String cfReferente;
-    private int tipologia;
-    private int parent;
-    private List<OrganigrammaStruttura> childrens;
-    private int strutturaOriginale;
+    private DizionarioDto tipologia;
+    private OrganigrammaStrutturaDto parent;
+    private List<OrganigrammaStrutturaDto> childrens;
+    private OrganigrammaStrutturaDto strutturaOriginale;
     private boolean abilitato;
     private int pubblico;
     private boolean isAsl;
     private boolean reteRegionale;
-    private int categoria;
+    private DizionarioDto categoria;
     private String codiceTs;
     private String codCap;
     private String codMinisteriale;
@@ -39,13 +38,13 @@ public class OrganigrammaStrutturaDto {
     private String codiceHsp11;
     private String codiceHsp12;
     private int codiceEdotto;
-    private String comune;
+    private ComuneDto comune;
     private LocalDate dataApertura;
     private LocalDate dataChiusura;
     private LocalDate dataAttivazione;
-    private int tipologiaGiuridica;
-    private int tipologiaEdotto;
-    private int distretto;
+    private DizionarioDto tipologiaGiuridica;
+    private DizionarioDto tipologiaEdotto;
+    private OrganigrammaStrutturaDto distretto;
     private int progDistretto;
     private int progServizio;
     private int progStabilimento;
