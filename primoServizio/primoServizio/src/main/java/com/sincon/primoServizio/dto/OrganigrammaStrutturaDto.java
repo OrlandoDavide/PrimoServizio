@@ -50,13 +50,13 @@ public class OrganigrammaStrutturaDto {
     private int progStabilimento;
     private int progReparto;
     private int progCO;
-    private int createdBy;
+    private Long createdBy;
     private int createdWith;
     private LocalDate createdDate;
-    private int modifiedBy;
+    private Long modifiedBy;
     private int modifiedWith;
     private LocalDate modifiedDate;
-    private int deletedBy;
+    private Long deletedBy;
     private int deletedWith;
     private LocalDate deletedDate;
     private String codiceSpecialitaClinica;

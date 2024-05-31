@@ -149,7 +149,7 @@ public class OrganigrammaStruttura {
     private int progCO;
 
     @Column(name = "ID_CREATORE")
-    private int createdBy;
+    private Long createdBy;
 
     @Column(name = "ID_PROFILO_CREATORE")
     private int createdWith;
@@ -158,7 +158,7 @@ public class OrganigrammaStruttura {
     private LocalDate createdDate;
 
     @Column(name = "ID_ULTIMA_MODIFICA")
-    private int modifiedBy;
+    private Long modifiedBy;
 
     @Column(name = "ID_PROFILO_MODIFICA")
     private int modifiedWith;
@@ -167,7 +167,7 @@ public class OrganigrammaStruttura {
     private LocalDate modifiedDate;
 
     @Column(name = "ID_DELETE")
-    private int deletedBy;
+    private Long deletedBy;
 
     @Column(name = "ID_PROFILO_DELETE")
     private int deletedWith;

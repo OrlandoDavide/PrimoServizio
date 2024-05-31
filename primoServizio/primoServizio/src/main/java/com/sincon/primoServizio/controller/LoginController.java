@@ -1,6 +1,5 @@
 package com.sincon.primoServizio.controller;
 
-import com.sincon.primoServizio.exception.NotFoundException;
 import com.sincon.primoServizio.model.Utente;
 import com.sincon.primoServizio.service.JWTService;
 import com.sincon.primoServizio.service.UtenteService;
@@ -51,7 +50,7 @@ public class LoginController {
                    String token = this.jwtService.generaToken(utente.getEmail(), utente.getId());
 
                    return ResponseEntity.ok()
-                                        .body(token);
+                                        .body("Login effettuato con successo. \n" + token);
                }
             }
             else return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

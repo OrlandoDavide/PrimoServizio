@@ -7,6 +7,7 @@ import com.sincon.primoServizio.mapperEntityDto.UtenteMapper;
 import com.sincon.primoServizio.model.Utente;
 import com.sincon.primoServizio.repository.UtenteRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ import java.util.List;
 
 @Service
 public class UtenteService {
+
+    @Autowired
+    private HttpServletRequest request;
 
     private static final Logger logger = LoggerFactory.getLogger(UtenteService.class);
     private final UtenteRepository utenteRepository;
@@ -112,9 +116,14 @@ public class UtenteService {
     }
 
     // Recupera utente in sessione
-    public UtenteDto getUtenteInSessione(HttpServletRequest request) {
-        String idUtente = String.valueOf(request.getSession().getAttribute("id"));
+    public UtenteDto getUtenteInSessione() {
+        HttpSession sessione = request.getSession(false);
 
-        return getUtenteById(Long.valueOf(idUtente));
+        if(sessione != null) {
+            String idUtente = String.valueOf(request.getSession().getAttribute("id"));
+            if(idUtente != null) {
+                return getUtenteById(Long.valueOf(idUtente));
+            } else throw new NotFoundException();
+        } else throw new NotFoundException(404, "Sessione non trovata");
     }
 }

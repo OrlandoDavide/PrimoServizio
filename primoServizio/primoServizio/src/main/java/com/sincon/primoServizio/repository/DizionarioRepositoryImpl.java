@@ -16,6 +16,7 @@ public class DizionarioRepositoryImpl {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
+    // GET dizionario by CODIFICA
     public Dizionario getDizionarioByCodifica(String codifica, String categoria) {
         return queryFactory.selectFrom(qDizionario)
                 .where(
@@ -25,6 +26,7 @@ public class DizionarioRepositoryImpl {
                 .fetchOne();
     }
 
+    // GET dizionario by ID
     public Dizionario getDizionarioById(Long id) {
         return queryFactory.selectFrom(qDizionario)
                 .where(qDizionario.id.eq(id))

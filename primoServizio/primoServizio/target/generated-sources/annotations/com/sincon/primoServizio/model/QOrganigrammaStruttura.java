@@ -60,7 +60,7 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
 
     public final QComune comune;
 
-    public final NumberPath<Integer> createdBy = createNumber("createdBy", Integer.class);
+    public final NumberPath<Long> createdBy = createNumber("createdBy", Long.class);
 
     public final DatePath<java.time.LocalDate> createdDate = createDate("createdDate", java.time.LocalDate.class);
 
@@ -74,7 +74,7 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
 
     public final DatePath<java.time.LocalDate> dataChiusura = createDate("dataChiusura", java.time.LocalDate.class);
 
-    public final NumberPath<Integer> deletedBy = createNumber("deletedBy", Integer.class);
+    public final NumberPath<Long> deletedBy = createNumber("deletedBy", Long.class);
 
     public final DatePath<java.time.LocalDate> deletedDate = createDate("deletedDate", java.time.LocalDate.class);
 
@@ -90,7 +90,7 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
 
     public final BooleanPath isAsl = createBoolean("isAsl");
 
-    public final NumberPath<Integer> modifiedBy = createNumber("modifiedBy", Integer.class);
+    public final NumberPath<Long> modifiedBy = createNumber("modifiedBy", Long.class);
 
     public final DatePath<java.time.LocalDate> modifiedDate = createDate("modifiedDate", java.time.LocalDate.class);
 

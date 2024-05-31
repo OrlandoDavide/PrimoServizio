@@ -33,7 +33,7 @@ public class UtenteController {
             if(listaUtentiDto.isEmpty()) {
                 return ResponseEntity.status(200).body("La lista utenti è vuota");
             }
-            else return ResponseEntity.ok(listaUtentiDto);
+            else return ResponseEntity.status(200).body(listaUtentiDto);
 
         } catch (Exception ex) {
             logger.error("Errore generico per lista utenti", ex);
@@ -49,12 +49,12 @@ public class UtenteController {
 
             if(utenteDaModificare != null) {
                 utenteService.modificaUtente(utenteDaModificare);
-                return ResponseEntity.ok()
+                return ResponseEntity.status(200)
                                      .body("Utente modificato con successo.");
 
             } else {
                 utenteService.registraUtente(utenteDto);
-                return ResponseEntity.ok()
+                return ResponseEntity.status(200)
                                      .body("Utente registrato con successo.");
             }
 
@@ -79,10 +79,10 @@ public class UtenteController {
                 utenteService.cambioStatoUtente(id);
 
                 if(utente.isAttivo()) {
-                    return ResponseEntity.ok()
+                    return ResponseEntity.status(200)
                                          .body("Utente disattivato con successo.");
                 }
-                else return ResponseEntity.ok()
+                else return ResponseEntity.status(200)
                                           .body("Utente attivato con successo.");
             }
             else {
@@ -112,7 +112,7 @@ public class UtenteController {
             else {
                 utenteService.eliminazioneUtente(id);
 
-                return ResponseEntity.ok().body("Utente eliminato con successo.");
+                return ResponseEntity.status(200).body("Utente eliminato con successo.");
             }
         } catch (NotFoundException ex) {
             logger.error("Errore durante eliminazione utente. Id: " + id);

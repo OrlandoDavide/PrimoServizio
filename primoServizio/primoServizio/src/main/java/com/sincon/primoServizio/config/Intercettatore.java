@@ -50,21 +50,21 @@ public class Intercettatore implements HandlerInterceptor {
         }
     }
 
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable ModelAndView modelAndView) {
-        String token = request.getHeader("Authorization");
-
-        if(token != null && jwtService.validaToken(token)) {
-            if(token.startsWith("Bearer ")) {
-                token = token.substring(7).trim();
-            }
-            Claims claims = jwtService.getAllClaimsFromToken(token);
-            String idUtente = claims.get("id", String.class);
-
-            if(idUtente != null) {
-                 request.getSession().setAttribute("id", idUtente);
-            }
-        }
-    }
+//    @Override
+//    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable ModelAndView modelAndView) {
+//        String token = request.getHeader("Authorization");
+//
+//        if(token != null && jwtService.validaToken(token)) {
+//            if(token.startsWith("Bearer ")) {
+//                token = token.substring(7).trim();
+//            }
+//            Claims claims = jwtService.getAllClaimsFromToken(token);
+//            String idUtente = claims.get("id", String.class);
+//
+//            if(idUtente != null) {
+//                 request.getSession().setAttribute("id", idUtente);
+//            }
+//        }
+//    }
 
 }
