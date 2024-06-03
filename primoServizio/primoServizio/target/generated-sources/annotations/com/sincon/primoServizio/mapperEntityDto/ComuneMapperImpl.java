@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-05-31T10:51:11+0200",
+    date = "2024-06-03T16:20:17+0200",
     comments = "version: 1.6.0.Beta1, compiler: javac, environment: Java 20.0.2.1 (Amazon.com Inc.)"
 )
 @Component
@@ -45,5 +45,31 @@ public class ComuneMapperImpl implements ComuneMapper {
         comune.setAttivo( comuneDto.getAttivo() );
 
         return comune;
+    }
+
+    @Override
+    public void aggiornaComuneDto(ComuneDto comune, ComuneDto comuneEsistente) {
+        if ( comune == null ) {
+            return;
+        }
+
+        comuneEsistente.setIstat( comune.getIstat() );
+        comuneEsistente.setNome( comune.getNome() );
+        comuneEsistente.setProvincia( comune.getProvincia() );
+        comuneEsistente.setAsl( comune.getAsl() );
+        comuneEsistente.setAttivo( comune.getAttivo() );
+    }
+
+    @Override
+    public void aggiornaComune(Comune comune, Comune comuneEsistente) {
+        if ( comune == null ) {
+            return;
+        }
+
+        comuneEsistente.setIstat( comune.getIstat() );
+        comuneEsistente.setNome( comune.getNome() );
+        comuneEsistente.setProvincia( comune.getProvincia() );
+        comuneEsistente.setAsl( comune.getAsl() );
+        comuneEsistente.setAttivo( comune.getAttivo() );
     }
 }

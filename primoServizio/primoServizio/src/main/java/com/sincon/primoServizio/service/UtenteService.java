@@ -116,14 +116,14 @@ public class UtenteService {
     }
 
     // Recupera utente in sessione
-    public UtenteDto getUtenteInSessione() {
-        HttpSession sessione = request.getSession(false);
-
-        if(sessione != null) {
-            String idUtente = String.valueOf(request.getSession().getAttribute("id"));
-            if(idUtente != null) {
-                return getUtenteById(Long.valueOf(idUtente));
-            } else throw new NotFoundException();
-        } else throw new NotFoundException(404, "Sessione non trovata");
-    }
+//    public UtenteDto getUtenteInSessione() {
+//        HttpSession sessione = request.getSession(false);
+//
+//        if(sessione != null) {
+//            String idUtente = String.valueOf(request.getSession().getAttribute("id"));
+//            if(idUtente != null) {
+//                return getUtenteById(Long.valueOf(idUtente));
+//            } else throw new NotFoundException();
+//        } else throw new NotFoundException(404, "Sessione non trovata");
+//    }
 }

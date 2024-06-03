@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-05-31T10:51:10+0200",
+    date = "2024-06-03T16:20:17+0200",
     comments = "version: 1.6.0.Beta1, compiler: javac, environment: Java 20.0.2.1 (Amazon.com Inc.)"
 )
 @Component
@@ -53,5 +53,39 @@ public class DizionarioMapperImpl implements DizionarioMapper {
         dizionario.setOrdine( dizionarioDto.getOrdine() );
 
         return dizionario;
+    }
+
+    @Override
+    public void aggiornaDizionarioDto(DizionarioDto dizionarioDto, DizionarioDto dizionarioEsistenteDto) {
+        if ( dizionarioDto == null ) {
+            return;
+        }
+
+        dizionarioEsistenteDto.setId( dizionarioDto.getId() );
+        dizionarioEsistenteDto.setDenominazione( dizionarioDto.getDenominazione() );
+        dizionarioEsistenteDto.setCategoria( dizionarioDto.getCategoria() );
+        dizionarioEsistenteDto.setCodifica( dizionarioDto.getCodifica() );
+        dizionarioEsistenteDto.setCustomFlag( dizionarioDto.getCustomFlag() );
+        dizionarioEsistenteDto.setAttivo( dizionarioDto.isAttivo() );
+        dizionarioEsistenteDto.setMalattia( dizionarioDto.getMalattia() );
+        dizionarioEsistenteDto.setParent( dizionarioDto.getParent() );
+        dizionarioEsistenteDto.setOrdine( dizionarioDto.getOrdine() );
+    }
+
+    @Override
+    public void aggiornaDizionario(Dizionario dizionarioDto, Dizionario dizionarioEsistenteDto) {
+        if ( dizionarioDto == null ) {
+            return;
+        }
+
+        dizionarioEsistenteDto.setId( dizionarioDto.getId() );
+        dizionarioEsistenteDto.setDenominazione( dizionarioDto.getDenominazione() );
+        dizionarioEsistenteDto.setCategoria( dizionarioDto.getCategoria() );
+        dizionarioEsistenteDto.setCodifica( dizionarioDto.getCodifica() );
+        dizionarioEsistenteDto.setCustomFlag( dizionarioDto.getCustomFlag() );
+        dizionarioEsistenteDto.setAttivo( dizionarioDto.isAttivo() );
+        dizionarioEsistenteDto.setMalattia( dizionarioDto.getMalattia() );
+        dizionarioEsistenteDto.setParent( dizionarioDto.getParent() );
+        dizionarioEsistenteDto.setOrdine( dizionarioDto.getOrdine() );
     }
 }

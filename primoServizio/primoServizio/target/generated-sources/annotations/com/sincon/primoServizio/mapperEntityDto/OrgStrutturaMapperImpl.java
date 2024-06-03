@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-05-31T10:51:11+0200",
+    date = "2024-06-03T16:20:17+0200",
     comments = "version: 1.6.0.Beta1, compiler: javac, environment: Java 20.0.2.1 (Amazon.com Inc.)"
 )
 @Component
@@ -40,7 +40,6 @@ public class OrgStrutturaMapperImpl implements OrgStrutturaMapper {
         organigrammaStrutturaDto.setCfReferente( orgStruttura.getCfReferente() );
         organigrammaStrutturaDto.setTipologia( dizionarioToDizionarioDto( orgStruttura.getTipologia() ) );
         organigrammaStrutturaDto.setParent( orgStrutturaEntityToDto( orgStruttura.getParent() ) );
-        organigrammaStrutturaDto.setChildrens( organigrammaStrutturaListToOrganigrammaStrutturaDtoList( orgStruttura.getChildrens() ) );
         organigrammaStrutturaDto.setStrutturaOriginale( orgStrutturaEntityToDto( orgStruttura.getStrutturaOriginale() ) );
         organigrammaStrutturaDto.setAbilitato( orgStruttura.isAbilitato() );
         organigrammaStrutturaDto.setPubblico( orgStruttura.getPubblico() );
@@ -82,6 +81,20 @@ public class OrgStrutturaMapperImpl implements OrgStrutturaMapper {
         organigrammaStrutturaDto.setPuntoPrelievo( orgStruttura.isPuntoPrelievo() );
 
         return organigrammaStrutturaDto;
+    }
+
+    @Override
+    public List<OrganigrammaStrutturaDto> orgStrutturaEntityToDtoList(List<OrganigrammaStrutturaDto> entities) {
+        if ( entities == null ) {
+            return null;
+        }
+
+        List<OrganigrammaStrutturaDto> list = new ArrayList<OrganigrammaStrutturaDto>( entities.size() );
+        for ( OrganigrammaStrutturaDto organigrammaStrutturaDto : entities ) {
+            list.add( organigrammaStrutturaDto );
+        }
+
+        return list;
     }
 
     @Override
@@ -149,6 +162,222 @@ public class OrgStrutturaMapperImpl implements OrgStrutturaMapper {
         return organigrammaStruttura;
     }
 
+    @Override
+    public void aggiornaStrutturaDto(OrganigrammaStrutturaDto struttura, OrganigrammaStrutturaDto strutturaEsistente) {
+        if ( struttura == null ) {
+            return;
+        }
+
+        strutturaEsistente.setDenominazione( struttura.getDenominazione() );
+        strutturaEsistente.setCodice( struttura.getCodice() );
+        if ( struttura.getAsl() != null ) {
+            if ( strutturaEsistente.getAsl() == null ) {
+                strutturaEsistente.setAsl( new OrganigrammaStrutturaDto() );
+            }
+            aggiornaStrutturaDto( struttura.getAsl(), strutturaEsistente.getAsl() );
+        }
+        else {
+            strutturaEsistente.setAsl( null );
+        }
+        strutturaEsistente.setNomeTitolare( struttura.getNomeTitolare() );
+        strutturaEsistente.setCognomeTitolare( struttura.getCognomeTitolare() );
+        strutturaEsistente.setEmailTitolare( struttura.getEmailTitolare() );
+        strutturaEsistente.setTelefonoTitolare( struttura.getTelefonoTitolare() );
+        strutturaEsistente.setNomeReferente( struttura.getNomeReferente() );
+        strutturaEsistente.setCognomeReferente( struttura.getCognomeReferente() );
+        strutturaEsistente.setCfReferente( struttura.getCfReferente() );
+        strutturaEsistente.setTipologia( struttura.getTipologia() );
+        if ( struttura.getParent() != null ) {
+            if ( strutturaEsistente.getParent() == null ) {
+                strutturaEsistente.setParent( new OrganigrammaStrutturaDto() );
+            }
+            aggiornaStrutturaDto( struttura.getParent(), strutturaEsistente.getParent() );
+        }
+        else {
+            strutturaEsistente.setParent( null );
+        }
+        if ( strutturaEsistente.getChildrens() != null ) {
+            List<OrganigrammaStrutturaDto> list = orgStrutturaEntityToDtoList( struttura.getChildrens() );
+            if ( list != null ) {
+                strutturaEsistente.getChildrens().clear();
+                strutturaEsistente.getChildrens().addAll( list );
+            }
+            else {
+                strutturaEsistente.setChildrens( null );
+            }
+        }
+        else {
+            List<OrganigrammaStrutturaDto> list = orgStrutturaEntityToDtoList( struttura.getChildrens() );
+            if ( list != null ) {
+                strutturaEsistente.setChildrens( list );
+            }
+        }
+        if ( struttura.getStrutturaOriginale() != null ) {
+            if ( strutturaEsistente.getStrutturaOriginale() == null ) {
+                strutturaEsistente.setStrutturaOriginale( new OrganigrammaStrutturaDto() );
+            }
+            aggiornaStrutturaDto( struttura.getStrutturaOriginale(), strutturaEsistente.getStrutturaOriginale() );
+        }
+        else {
+            strutturaEsistente.setStrutturaOriginale( null );
+        }
+        strutturaEsistente.setAbilitato( struttura.isAbilitato() );
+        strutturaEsistente.setPubblico( struttura.getPubblico() );
+        strutturaEsistente.setReteRegionale( struttura.isReteRegionale() );
+        strutturaEsistente.setCategoria( struttura.getCategoria() );
+        strutturaEsistente.setCodiceTs( struttura.getCodiceTs() );
+        strutturaEsistente.setCodCap( struttura.getCodCap() );
+        strutturaEsistente.setCodMinisteriale( struttura.getCodMinisteriale() );
+        strutturaEsistente.setCodProvinciale( struttura.getCodProvinciale() );
+        strutturaEsistente.setCodiceNSIS( struttura.getCodiceNSIS() );
+        strutturaEsistente.setCodiceSts11( struttura.getCodiceSts11() );
+        strutturaEsistente.setCodiceHsp11( struttura.getCodiceHsp11() );
+        strutturaEsistente.setCodiceHsp12( struttura.getCodiceHsp12() );
+        strutturaEsistente.setCodiceEdotto( struttura.getCodiceEdotto() );
+        strutturaEsistente.setComune( struttura.getComune() );
+        strutturaEsistente.setDataApertura( struttura.getDataApertura() );
+        strutturaEsistente.setDataChiusura( struttura.getDataChiusura() );
+        strutturaEsistente.setDataAttivazione( struttura.getDataAttivazione() );
+        strutturaEsistente.setTipologiaGiuridica( struttura.getTipologiaGiuridica() );
+        strutturaEsistente.setTipologiaEdotto( struttura.getTipologiaEdotto() );
+        if ( struttura.getDistretto() != null ) {
+            if ( strutturaEsistente.getDistretto() == null ) {
+                strutturaEsistente.setDistretto( new OrganigrammaStrutturaDto() );
+            }
+            aggiornaStrutturaDto( struttura.getDistretto(), strutturaEsistente.getDistretto() );
+        }
+        else {
+            strutturaEsistente.setDistretto( null );
+        }
+        strutturaEsistente.setProgDistretto( struttura.getProgDistretto() );
+        strutturaEsistente.setProgServizio( struttura.getProgServizio() );
+        strutturaEsistente.setProgStabilimento( struttura.getProgStabilimento() );
+        strutturaEsistente.setProgReparto( struttura.getProgReparto() );
+        strutturaEsistente.setProgCO( struttura.getProgCO() );
+        strutturaEsistente.setCreatedBy( struttura.getCreatedBy() );
+        strutturaEsistente.setCreatedWith( struttura.getCreatedWith() );
+        strutturaEsistente.setCreatedDate( struttura.getCreatedDate() );
+        strutturaEsistente.setModifiedBy( struttura.getModifiedBy() );
+        strutturaEsistente.setModifiedWith( struttura.getModifiedWith() );
+        strutturaEsistente.setModifiedDate( struttura.getModifiedDate() );
+        strutturaEsistente.setDeletedBy( struttura.getDeletedBy() );
+        strutturaEsistente.setDeletedWith( struttura.getDeletedWith() );
+        strutturaEsistente.setDeletedDate( struttura.getDeletedDate() );
+        strutturaEsistente.setCodiceSpecialitaClinica( struttura.getCodiceSpecialitaClinica() );
+        strutturaEsistente.setDataAllineamento( struttura.getDataAllineamento() );
+        strutturaEsistente.setScreening( struttura.isScreening() );
+        strutturaEsistente.setPuntoPrelievo( struttura.isPuntoPrelievo() );
+
+        handleChildrens( struttura, strutturaEsistente );
+    }
+
+    @Override
+    public void aggiornaStruttura(OrganigrammaStruttura struttura, OrganigrammaStruttura strutturaEsistente) {
+        if ( struttura == null ) {
+            return;
+        }
+
+        strutturaEsistente.setDenominazione( struttura.getDenominazione() );
+        strutturaEsistente.setCodice( struttura.getCodice() );
+        if ( struttura.getAsl() != null ) {
+            if ( strutturaEsistente.getAsl() == null ) {
+                strutturaEsistente.setAsl( new OrganigrammaStruttura() );
+            }
+            aggiornaStruttura( struttura.getAsl(), strutturaEsistente.getAsl() );
+        }
+        else {
+            strutturaEsistente.setAsl( null );
+        }
+        strutturaEsistente.setNomeTitolare( struttura.getNomeTitolare() );
+        strutturaEsistente.setCognomeTitolare( struttura.getCognomeTitolare() );
+        strutturaEsistente.setEmailTitolare( struttura.getEmailTitolare() );
+        strutturaEsistente.setTelefonoTitolare( struttura.getTelefonoTitolare() );
+        strutturaEsistente.setNomeReferente( struttura.getNomeReferente() );
+        strutturaEsistente.setCognomeReferente( struttura.getCognomeReferente() );
+        strutturaEsistente.setCfReferente( struttura.getCfReferente() );
+        strutturaEsistente.setTipologia( struttura.getTipologia() );
+        if ( struttura.getParent() != null ) {
+            if ( strutturaEsistente.getParent() == null ) {
+                strutturaEsistente.setParent( new OrganigrammaStruttura() );
+            }
+            aggiornaStruttura( struttura.getParent(), strutturaEsistente.getParent() );
+        }
+        else {
+            strutturaEsistente.setParent( null );
+        }
+        if ( strutturaEsistente.getChildrens() != null ) {
+            List<OrganigrammaStruttura> list = struttura.getChildrens();
+            if ( list != null ) {
+                strutturaEsistente.getChildrens().clear();
+                strutturaEsistente.getChildrens().addAll( list );
+            }
+            else {
+                strutturaEsistente.setChildrens( null );
+            }
+        }
+        else {
+            List<OrganigrammaStruttura> list = struttura.getChildrens();
+            if ( list != null ) {
+                strutturaEsistente.setChildrens( new ArrayList<OrganigrammaStruttura>( list ) );
+            }
+        }
+        if ( struttura.getStrutturaOriginale() != null ) {
+            if ( strutturaEsistente.getStrutturaOriginale() == null ) {
+                strutturaEsistente.setStrutturaOriginale( new OrganigrammaStruttura() );
+            }
+            aggiornaStruttura( struttura.getStrutturaOriginale(), strutturaEsistente.getStrutturaOriginale() );
+        }
+        else {
+            strutturaEsistente.setStrutturaOriginale( null );
+        }
+        strutturaEsistente.setAbilitato( struttura.isAbilitato() );
+        strutturaEsistente.setPubblico( struttura.getPubblico() );
+        strutturaEsistente.setReteRegionale( struttura.isReteRegionale() );
+        strutturaEsistente.setCategoria( struttura.getCategoria() );
+        strutturaEsistente.setCodiceTs( struttura.getCodiceTs() );
+        strutturaEsistente.setCodCap( struttura.getCodCap() );
+        strutturaEsistente.setCodMinisteriale( struttura.getCodMinisteriale() );
+        strutturaEsistente.setCodProvinciale( struttura.getCodProvinciale() );
+        strutturaEsistente.setCodiceNSIS( struttura.getCodiceNSIS() );
+        strutturaEsistente.setCodiceSts11( struttura.getCodiceSts11() );
+        strutturaEsistente.setCodiceHsp11( struttura.getCodiceHsp11() );
+        strutturaEsistente.setCodiceHsp12( struttura.getCodiceHsp12() );
+        strutturaEsistente.setCodiceEdotto( struttura.getCodiceEdotto() );
+        strutturaEsistente.setComune( struttura.getComune() );
+        strutturaEsistente.setDataApertura( struttura.getDataApertura() );
+        strutturaEsistente.setDataChiusura( struttura.getDataChiusura() );
+        strutturaEsistente.setDataAttivazione( struttura.getDataAttivazione() );
+        strutturaEsistente.setTipologiaGiuridica( struttura.getTipologiaGiuridica() );
+        strutturaEsistente.setTipologiaEdotto( struttura.getTipologiaEdotto() );
+        if ( struttura.getDistretto() != null ) {
+            if ( strutturaEsistente.getDistretto() == null ) {
+                strutturaEsistente.setDistretto( new OrganigrammaStruttura() );
+            }
+            aggiornaStruttura( struttura.getDistretto(), strutturaEsistente.getDistretto() );
+        }
+        else {
+            strutturaEsistente.setDistretto( null );
+        }
+        strutturaEsistente.setProgDistretto( struttura.getProgDistretto() );
+        strutturaEsistente.setProgServizio( struttura.getProgServizio() );
+        strutturaEsistente.setProgStabilimento( struttura.getProgStabilimento() );
+        strutturaEsistente.setProgReparto( struttura.getProgReparto() );
+        strutturaEsistente.setProgCO( struttura.getProgCO() );
+        strutturaEsistente.setCreatedBy( struttura.getCreatedBy() );
+        strutturaEsistente.setCreatedWith( struttura.getCreatedWith() );
+        strutturaEsistente.setCreatedDate( struttura.getCreatedDate() );
+        strutturaEsistente.setModifiedBy( struttura.getModifiedBy() );
+        strutturaEsistente.setModifiedWith( struttura.getModifiedWith() );
+        strutturaEsistente.setModifiedDate( struttura.getModifiedDate() );
+        strutturaEsistente.setDeletedBy( struttura.getDeletedBy() );
+        strutturaEsistente.setDeletedWith( struttura.getDeletedWith() );
+        strutturaEsistente.setDeletedDate( struttura.getDeletedDate() );
+        strutturaEsistente.setCodiceSpecialitaClinica( struttura.getCodiceSpecialitaClinica() );
+        strutturaEsistente.setDataAllineamento( struttura.getDataAllineamento() );
+        strutturaEsistente.setScreening( struttura.isScreening() );
+        strutturaEsistente.setPuntoPrelievo( struttura.isPuntoPrelievo() );
+    }
+
     protected DizionarioDto dizionarioToDizionarioDto(Dizionario dizionario) {
         if ( dizionario == null ) {
             return null;
@@ -167,19 +396,6 @@ public class OrgStrutturaMapperImpl implements OrgStrutturaMapper {
         dizionarioDto.setOrdine( dizionario.getOrdine() );
 
         return dizionarioDto;
-    }
-
-    protected List<OrganigrammaStrutturaDto> organigrammaStrutturaListToOrganigrammaStrutturaDtoList(List<OrganigrammaStruttura> list) {
-        if ( list == null ) {
-            return null;
-        }
-
-        List<OrganigrammaStrutturaDto> list1 = new ArrayList<OrganigrammaStrutturaDto>( list.size() );
-        for ( OrganigrammaStruttura organigrammaStruttura : list ) {
-            list1.add( orgStrutturaEntityToDto( organigrammaStruttura ) );
-        }
-
-        return list1;
     }
 
     protected ComuneDto comuneToComuneDto(Comune comune) {

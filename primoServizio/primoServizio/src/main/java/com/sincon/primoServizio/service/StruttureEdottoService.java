@@ -3,14 +3,19 @@ package com.sincon.primoServizio.service;
 import com.sincon.primoServizio.dto.*;
 import com.sincon.primoServizio.exception.NotFoundException;
 import com.sincon.primoServizio.mapperEntityDto.OrgStrutturaMapper;
+import com.sincon.primoServizio.model.OrganigrammaStruttura;
 import com.sincon.primoServizio.repository.ComuneRepository;
 import com.sincon.primoServizio.repository.OrgStrutturaRepositoryImpl;
 import com.sincon.primoServizio.repository.OrganigrammaStrutturaRepository;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -23,19 +28,24 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @Service
 public class StruttureEdottoService {
     private static final Logger logger = LoggerFactory.getLogger(StruttureEdottoService.class);
+    private final Set<String> codEdottoStruttureEscluse = Set.of("969272","748771","99250","98727","100351");
+    private final ComuneRepository comuneRepository;
     private final OrgStrutturaRepositoryImpl orgRepositoryImpl;
     private final OrganigrammaStrutturaRepository strutturaRepository;
     private final OrgStrutturaMapper strutturaMapper;
-    private final ComuneRepository comuneRepository;
     private final DizionarioService dizionarioService;
-    private final UtenteService utenteService;
     private final ComuneService comuneService;
+    private final UtenteService utenteService;
+    private final JWTService jwtService;
 
     @Autowired
     public StruttureEdottoService(OrgStrutturaRepositoryImpl orgRepositoryImpl,
@@ -44,13 +54,14 @@ public class StruttureEdottoService {
                                   ComuneRepository comuneRepository,
                                   DizionarioService dizionarioService,
                                   UtenteService utenteService,
-                                  ComuneService comuneService)
+                                  ComuneService comuneService, JWTService jwtService)
     {
         this.orgRepositoryImpl = orgRepositoryImpl;
         this.strutturaRepository = strutturaRepository;
         this.strutturaMapper = strutturaMapper;
         this.comuneRepository = comuneRepository;
         this.dizionarioService = dizionarioService;
+        this.jwtService = jwtService;
         this.utenteService = utenteService;
         this.comuneService = comuneService;
     }
@@ -87,6 +98,9 @@ public class StruttureEdottoService {
                         case "codCAP" :
                             struttura.setCodCap(streamReader.getElementText());
                             break;
+                        case "telefono" :
+                            struttura.setTelefonoTitolare(streamReader.getElementText().trim());
+                            break;
                         case "email" :
                             struttura.setEmailTitolare(streamReader.getElementText());
                             break;
@@ -115,7 +129,8 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiGeneraliStruttura")));
 
-            //setAudit(struttura);
+            struttura.setAbilitato(true);
+            setAudit(struttura);
             DizionarioDto dizionario = dizionarioService.getDizionarioByCodifica(codTipologiaStruttura,"TIPOLOGIA_EDOTTO");
             if(dizionario != null) {
                 struttura.setTipologiaEdotto(dizionario);
@@ -143,23 +158,17 @@ public class StruttureEdottoService {
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     switch (tag) {
                         case "codNazionale":
-                            asl.setCodiceNSIS(streamReader.getElementText());
-                            break;
-                        case "email" :
-                            asl.setEmailTitolare(streamReader.getElementText());
-                            break;
-                        case "telefono" :
-                            asl.setTelefonoTitolare(streamReader.getElementText());
+                            asl.setCodiceNSIS(streamReader.getElementText().trim());
                             break;
                         case "partitaIVA" :
-                            asl.setCodice(streamReader.getElementText());
+                            asl.setCodice(streamReader.getElementText().trim());
                             break;
                         case "codTipologiaGiuridica" :
-                            codifica = streamReader.getElementText();
+                            codifica = streamReader.getElementText().trim();
                             break;
                     }
                 }
-            } while (evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria"));
+            } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             //asl.setAsl(true);
 
             if(codifica != null && !(codifica.isBlank())) {
@@ -172,22 +181,38 @@ public class StruttureEdottoService {
         } finally {}
     }
 
+    public UtenteDto getUtenteAutenticato() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                .getRequest();
+
+        String token = request.getHeader("Authorization");
+        if(token != null && !token.isBlank()) {
+            if(token.startsWith("Bearer ")) {
+                token = token.substring(7).trim();
+            }
+            Claims claims = jwtService.getAllClaimsFromToken(token);
+            String id = claims.get("id", String.class);
+
+            return utenteService.getUtenteById(Long.valueOf(id));
+        }
+        return null;
+    }
+
     // Set AUDIT
     public void setAudit(OrganigrammaStrutturaDto struttura) {
-        UtenteDto utenteInSessione = utenteService.getUtenteInSessione();
-        if(utenteInSessione != null) {
+        if(getUtenteAutenticato() != null) {
             if(struttura.getId() == null || struttura.getId() < 1) {
                 struttura.setCreatedDate(LocalDate.now());
-                struttura.setCreatedBy(utenteInSessione.getId());
+                struttura.setCreatedBy(getUtenteAutenticato().getId());
                 //todo struttura.setCreatedWith();
             } else {
                 struttura.setModifiedDate(LocalDate.now());
-                struttura.setModifiedBy(utenteInSessione.getId());
+                struttura.setModifiedBy(getUtenteAutenticato().getId());
                 //todo struttura.setModifiedWith();
             }
         } else {
-            logger.error("Errore durante il recupero dell'utente in sessione.");
-            throw new NotFoundException(404, "Nessun utente in sessione trovato.");
+            logger.error("Errore durante il recupero dell'utente autenticato");
+            throw new NotFoundException(404, "Errore durante il recupero dell'utente autenticato");
         }
     }
 
@@ -237,10 +262,6 @@ public class StruttureEdottoService {
                 distretto.setTipologiaGiuridica(dizionarioService.getDizionarioByCodifica(codifica, "TIPO_GIURIDICA"));
             }
         } finally {}
-    }
-
-    public void setStruttura(OrganigrammaStrutturaDto struttura, XMLStreamReader streamReader) {
-
     }
 
     // Set TIPOLOGIA ISTITUTO DI RICOVERO
@@ -1004,6 +1025,10 @@ public class StruttureEdottoService {
         return false;
     }
 
+    public List<OrganigrammaStruttura> findByCodiciSpecialitaClinica(String[] codici) {
+        return orgRepositoryImpl.findByCodiciSpecialitaClinica(codici);
+    }
+
     public OrganigrammaStrutturaDto findAslByCodice(String codNSIS) {
         return strutturaMapper.orgStrutturaEntityToDto(orgRepositoryImpl.findAslByCodiceNSIS(codNSIS));
     }
@@ -1121,6 +1146,7 @@ public class StruttureEdottoService {
     public Optional<Path> trovaXmlByTipologiaStruttura(Path cartellaEdotto, String tipologia) throws IOException {
         try(Stream<Path> stream = Files.list(cartellaEdotto)) {
             return stream
+                    .filter(path -> path.getFileName().toString().endsWith(".xml"))
                     .filter(path -> {
                         logger.info("File trovato: " + path.getFileName());
                         try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
@@ -1152,8 +1178,10 @@ public class StruttureEdottoService {
         }
     }
 
-    public String getFileName(Optional<Path> xml) {
-        return xml.map(path -> path.getFileName().toString()).orElse(null);
+    // GET nome file senza estensione
+    public String getNomeFile(String nomeFile) {
+        int dot = nomeFile.lastIndexOf(".");
+        return nomeFile.substring(0, dot);
     }
 
     private void logEvent(XMLStreamReader reader, int event) {
@@ -1203,4 +1231,70 @@ public class StruttureEdottoService {
         } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
     }
 
+    public boolean isStrutturaEsclusa(String codiceEdotto) {
+        for(String codice : codEdottoStruttureEscluse) {
+            if (codice.equalsIgnoreCase(codiceEdotto)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+//    public void aggiornaStrutturaConFigli(OrganigrammaStrutturaDto nuovaStruttura, OrganigrammaStrutturaDto strutturaEsistente) {
+//        strutturaMapper.aggiornaStrutturaDto(nuovaStruttura, strutturaEsistente);
+//        if (nuovaStruttura.getChildrens() != null) {
+//            strutturaEsistente.getChildrens().clear();
+//            strutturaEsistente.getChildrens().addAll(nuovaStruttura.getChildrens());
+//            for (OrganigrammaStrutturaDto child : strutturaEsistente.getChildrens()) {
+//                child.setParent(strutturaEsistente);
+//            }
+//        }
+//    }
+
+//    public void aggiornaStrutturaConFigli(OrganigrammaStrutturaDto nuovaStruttura, OrganigrammaStrutturaDto strutturaEsistente) {
+//        // Aggiorna le proprietà dell'entità esistente
+//        strutturaMapper.aggiornaStrutturaDto(nuovaStruttura, strutturaEsistente);
+//
+//        // Aggiorna la collezione childrens
+//        if (nuovaStruttura.getChildrens() != null) {
+//            // Inizializza childrens se è null
+//            if (strutturaEsistente.getChildrens() == null) {
+//                strutturaEsistente.setChildrens(new ArrayList<>());
+//            }
+//
+//            // Rimuove gli elementi che non sono più presenti
+//            strutturaEsistente.getChildrens().removeIf(child -> !nuovaStruttura.getChildrens().contains(child));
+//
+//            // Aggiorna gli elementi esistenti e aggiunge i nuovi
+//            for (OrganigrammaStrutturaDto child : nuovaStruttura.getChildrens()) {
+//                if (!strutturaEsistente.getChildrens().contains(child)) {
+//                    child.setParent(strutturaEsistente);
+//                    strutturaEsistente.getChildrens().add(child);
+//                }
+//            }
+//        } else {
+//            // Se la nuova struttura non ha figli, rimuovi tutti i figli esistenti
+//            if (strutturaEsistente.getChildrens() != null) {
+//                strutturaEsistente.getChildrens().clear();
+//            }
+//        }
+//    }
+
+    public void aggiornaStruttura(OrganigrammaStrutturaDto struttura, OrganigrammaStrutturaDto strutturaEsistente) {
+        if(struttura.getChildrens() != null) {
+            if(strutturaEsistente.getChildrens() != null) {
+                strutturaEsistente.getChildrens().clear();
+            }
+            List<OrganigrammaStrutturaDto> nuovaListaChildrens = new ArrayList<>();
+
+            for (OrganigrammaStrutturaDto child : struttura.getChildrens()) {
+                nuovaListaChildrens.add(child);
+            }
+            strutturaEsistente.setChildrens(nuovaListaChildrens);
+
+            strutturaMapper.aggiornaStrutturaDto(struttura, strutturaEsistente);
+        } else {
+            strutturaMapper.aggiornaStrutturaDto(struttura, strutturaEsistente);
+        }
+    }
 }

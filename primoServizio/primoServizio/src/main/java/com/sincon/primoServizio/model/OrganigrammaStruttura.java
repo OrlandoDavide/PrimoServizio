@@ -15,8 +15,8 @@ public class OrganigrammaStruttura {
 
     @Id
     @Column(name = "ID_STRUTTURA")
-    @SequenceGenerator(name = "ORG_STRUTTURA_SEQ", sequenceName = "ORG_STRUTTURA_SEQ", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ORG_STRUTTURA_SEQ")
+    @SequenceGenerator(name = "STRUTTURA_SEQ", sequenceName = "STRUTTURA_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STRUTTURA_SEQ")
     private Long id;
 
     @Column(name = "DENOMINAZIONE")

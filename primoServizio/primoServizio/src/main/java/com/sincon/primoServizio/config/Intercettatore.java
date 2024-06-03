@@ -33,18 +33,17 @@ public class Intercettatore implements HandlerInterceptor {
 
         String token = request.getHeader("Authorization");
         if(token == null || token.isBlank()) {
-            logger.error(token);
-            logger.error("IL TOKEN E' NULLO !!!");
+            logger.error("Token nullo");
+
             return false;
         } else {
             if (jwtService.validaToken(token)) {
-                //request.setAttribute("Authorization", "Bearer " + token);
-                logger.error("IL TOKEN E' VALIDO!");
-                logger.error(token);
+                logger.error("Token valido");
+
                 return true;
             } else {
-                logger.error("IL TOKEN NON E' VALIDO!");
-                logger.error(token);
+                logger.error("Token non valido");
+
                 return false;
             }
         }

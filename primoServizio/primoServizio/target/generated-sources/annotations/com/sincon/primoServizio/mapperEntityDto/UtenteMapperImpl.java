@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-05-31T10:51:11+0200",
+    date = "2024-06-03T16:20:17+0200",
     comments = "version: 1.6.0.Beta1, compiler: javac, environment: Java 20.0.2.1 (Amazon.com Inc.)"
 )
 @Component
@@ -75,5 +75,29 @@ public class UtenteMapperImpl implements UtenteMapper {
         }
 
         return list;
+    }
+
+    @Override
+    public void aggiornaUtenteDto(UtenteDto utente, UtenteDto utenteEsistente) {
+        if ( utente == null ) {
+            return;
+        }
+
+        utenteEsistente.setId( utente.getId() );
+        utenteEsistente.setEmail( utente.getEmail() );
+        utenteEsistente.setPassword( utente.getPassword() );
+        utenteEsistente.setAttivo( utente.isAttivo() );
+    }
+
+    @Override
+    public void aggiornaUtente(Utente utente, Utente utenteEsistente) {
+        if ( utente == null ) {
+            return;
+        }
+
+        utenteEsistente.setId( utente.getId() );
+        utenteEsistente.setEmail( utente.getEmail() );
+        utenteEsistente.setPassword( utente.getPassword() );
+        utenteEsistente.setAttivo( utente.isAttivo() );
     }
 }
