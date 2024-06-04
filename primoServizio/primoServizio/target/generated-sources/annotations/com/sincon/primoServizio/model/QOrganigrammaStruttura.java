@@ -30,7 +30,7 @@ public class QOrganigrammaStruttura extends EntityPathBase<OrganigrammaStruttura
 
     public final StringPath cfReferente = createString("cfReferente");
 
-    public final ListPath<OrganigrammaStruttura, QOrganigrammaStruttura> childrens = this.<OrganigrammaStruttura, QOrganigrammaStruttura>createList("childrens", OrganigrammaStruttura.class, QOrganigrammaStruttura.class, PathInits.DIRECT2);
+    public final ListPath<OrganigrammaStruttura, QOrganigrammaStruttura> children = this.<OrganigrammaStruttura, QOrganigrammaStruttura>createList("children", OrganigrammaStruttura.class, QOrganigrammaStruttura.class, PathInits.DIRECT2);
 
     public final StringPath codCap = createString("codCap");
 

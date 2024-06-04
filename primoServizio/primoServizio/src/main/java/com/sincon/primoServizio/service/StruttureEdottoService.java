@@ -80,7 +80,7 @@ public class StruttureEdottoService {
         int evento;
         String tag = "";
 
-        logger.info("STO SETTANDO I DATI GENERALI");
+        //logger.info("STO SETTANDO I DATI GENERALI");
         try {
             do {
                 evento = streamReader.next();
@@ -306,7 +306,6 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
-
                 if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
 
                 if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
@@ -357,6 +356,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName();
@@ -380,7 +384,7 @@ public class StruttureEdottoService {
                     }
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
-            if(progDistretto != null) {
+            if(progDistretto != null && struttura.getAsl() != null) {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl().getId()));
             }
         } finally {}
@@ -395,6 +399,11 @@ public class StruttureEdottoService {
        try {
            do {
                evento = streamReader.next();
+               if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+               if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                   break;
+               }
 
                if(evento == XMLStreamReader.START_ELEMENT) {
                    tag = streamReader.getLocalName();
@@ -421,7 +430,7 @@ public class StruttureEdottoService {
            } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
            struttura.setParent(struttura.getDistretto());
 
-           if(progDistretto != null) {
+           if(progDistretto != null && struttura.getAsl() != null) {
                struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl().getId()));
            }
        } finally {}
@@ -435,6 +444,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName();
@@ -467,6 +481,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName().trim();
@@ -498,6 +517,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName().trim();
@@ -531,6 +555,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName();
@@ -553,7 +582,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             struttura.setParent(struttura.getDistretto());
-            if(progDistretto != null) {
+            if(progDistretto != null && struttura.getAsl() != null) {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl().getId()));
             }
         } finally {}
@@ -567,6 +596,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName().trim();
@@ -587,7 +621,9 @@ public class StruttureEdottoService {
                     }
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
-            struttura.setParent(struttura.getAsl());
+            if(struttura.getAsl() != null) {
+                struttura.setParent(struttura.getAsl());
+            }
 
         } finally {}
     }
@@ -601,6 +637,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName();
@@ -623,7 +664,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             struttura.setParent(struttura.getDistretto());
-            if(progDistretto != null) {
+            if(progDistretto != null && struttura.getAsl() != null) {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl().getId()));
             }
 
@@ -640,6 +681,17 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
+
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if (evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiGeneraliStruttura")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName();
@@ -686,6 +738,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName();
@@ -707,7 +764,7 @@ public class StruttureEdottoService {
                     }
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
-            if(progDistretto != null) {
+            if(progDistretto != null && struttura.getAsl() != null) {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl().getId()));
             }
             struttura.setParent(struttura.getDistretto());
@@ -723,6 +780,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName();
@@ -754,6 +816,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName();
@@ -785,6 +852,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName();
@@ -818,6 +890,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if (evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiGeneraliStruttura")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName();
@@ -864,6 +941,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName();
@@ -889,7 +971,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             struttura.setParent(struttura.getDistretto());
-            if(progDistretto != null) {
+            if(progDistretto != null && struttura.getAsl() != null) {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl().getId()));
             }
 
@@ -905,6 +987,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
 
@@ -950,6 +1037,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName();
@@ -975,7 +1067,7 @@ public class StruttureEdottoService {
                 }
             } while (!(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")));
             struttura.setParent(struttura.getDistretto());
-            if(progDistretto != null) {
+            if(progDistretto != null && struttura.getAsl() != null) {
                 struttura.setDistretto(getDistrettoByProg(progDistretto, struttura.getAsl().getId()));
             }
         } finally {}
@@ -989,6 +1081,11 @@ public class StruttureEdottoService {
         try {
             do {
                 evento = streamReader.next();
+                if(evento != XMLStreamReader.CHARACTERS) tag = streamReader.getLocalName();
+
+                if(evento == XMLStreamReader.END_ELEMENT && tag.equalsIgnoreCase("datiStrutturaSanitaria")) {
+                    break;
+                }
 
                 if(evento == XMLStreamReader.START_ELEMENT) {
                     tag = streamReader.getLocalName();
@@ -1129,7 +1226,7 @@ public class StruttureEdottoService {
                             case "datiStrutturaRiabilitativaPsichiatrica" :
                                 setDatiStrutturaRiabilitativaPsichiatrica(struttura, streamReader);
                                 break;
-                            case "daiStrutturaCureTermali" :
+                            case "datiStrutturaCureTermali" :
                                 setDatiStrutturaCureTermali(struttura, streamReader);
                                 break;
                         }
@@ -1168,7 +1265,7 @@ public class StruttureEdottoService {
                                 }
                             }
                         } catch (Exception e) {
-                            logger.error("Errore durante il recupero dell'XML per tipologia: " + e);
+                            logger.error("Errore durante il recupero del file per tipologia: " + e);
                         }
                         return false;
                     })
@@ -1281,20 +1378,10 @@ public class StruttureEdottoService {
 //    }
 
     public void aggiornaStruttura(OrganigrammaStrutturaDto struttura, OrganigrammaStrutturaDto strutturaEsistente) {
-        if(struttura.getChildrens() != null) {
-            if(strutturaEsistente.getChildrens() != null) {
-                strutturaEsistente.getChildrens().clear();
-            }
-            List<OrganigrammaStrutturaDto> nuovaListaChildrens = new ArrayList<>();
 
-            for (OrganigrammaStrutturaDto child : struttura.getChildrens()) {
-                nuovaListaChildrens.add(child);
-            }
-            strutturaEsistente.setChildrens(nuovaListaChildrens);
+        strutturaEsistente.getChildrens().clear();
+        strutturaEsistente.setChildrens(new ArrayList<>(struttura.getChildrens()));
 
-            strutturaMapper.aggiornaStrutturaDto(struttura, strutturaEsistente);
-        } else {
-            strutturaMapper.aggiornaStrutturaDto(struttura, strutturaEsistente);
-        }
+        strutturaMapper.aggiornaStrutturaDto(struttura, strutturaEsistente);
     }
 }

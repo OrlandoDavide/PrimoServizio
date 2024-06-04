@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-06-03T16:20:17+0200",
+    date = "2024-06-03T20:55:51+0200",
     comments = "version: 1.6.0.Beta1, compiler: javac, environment: Java 20.0.2.1 (Amazon.com Inc.)"
 )
 @Component
@@ -84,20 +84,6 @@ public class OrgStrutturaMapperImpl implements OrgStrutturaMapper {
     }
 
     @Override
-    public List<OrganigrammaStrutturaDto> orgStrutturaEntityToDtoList(List<OrganigrammaStrutturaDto> entities) {
-        if ( entities == null ) {
-            return null;
-        }
-
-        List<OrganigrammaStrutturaDto> list = new ArrayList<OrganigrammaStrutturaDto>( entities.size() );
-        for ( OrganigrammaStrutturaDto organigrammaStrutturaDto : entities ) {
-            list.add( organigrammaStrutturaDto );
-        }
-
-        return list;
-    }
-
-    @Override
     public OrganigrammaStruttura orgStrutturaDtoToEntity(OrganigrammaStrutturaDto orgStrutturaDto) {
         if ( orgStrutturaDto == null ) {
             return null;
@@ -118,7 +104,6 @@ public class OrgStrutturaMapperImpl implements OrgStrutturaMapper {
         organigrammaStruttura.setCfReferente( orgStrutturaDto.getCfReferente() );
         organigrammaStruttura.setTipologia( dizionarioDtoToDizionario( orgStrutturaDto.getTipologia() ) );
         organigrammaStruttura.setParent( orgStrutturaDtoToEntity( orgStrutturaDto.getParent() ) );
-        organigrammaStruttura.setChildrens( organigrammaStrutturaDtoListToOrganigrammaStrutturaList( orgStrutturaDto.getChildrens() ) );
         organigrammaStruttura.setStrutturaOriginale( orgStrutturaDtoToEntity( orgStrutturaDto.getStrutturaOriginale() ) );
         organigrammaStruttura.setAbilitato( orgStrutturaDto.isAbilitato() );
         organigrammaStruttura.setPubblico( orgStrutturaDto.getPubblico() );
@@ -197,7 +182,7 @@ public class OrgStrutturaMapperImpl implements OrgStrutturaMapper {
             strutturaEsistente.setParent( null );
         }
         if ( strutturaEsistente.getChildrens() != null ) {
-            List<OrganigrammaStrutturaDto> list = orgStrutturaEntityToDtoList( struttura.getChildrens() );
+            List<OrganigrammaStrutturaDto> list = struttura.getChildrens();
             if ( list != null ) {
                 strutturaEsistente.getChildrens().clear();
                 strutturaEsistente.getChildrens().addAll( list );
@@ -207,9 +192,9 @@ public class OrgStrutturaMapperImpl implements OrgStrutturaMapper {
             }
         }
         else {
-            List<OrganigrammaStrutturaDto> list = orgStrutturaEntityToDtoList( struttura.getChildrens() );
+            List<OrganigrammaStrutturaDto> list = struttura.getChildrens();
             if ( list != null ) {
-                strutturaEsistente.setChildrens( list );
+                strutturaEsistente.setChildrens( new ArrayList<OrganigrammaStrutturaDto>( list ) );
             }
         }
         if ( struttura.getStrutturaOriginale() != null ) {
@@ -267,8 +252,6 @@ public class OrgStrutturaMapperImpl implements OrgStrutturaMapper {
         strutturaEsistente.setDataAllineamento( struttura.getDataAllineamento() );
         strutturaEsistente.setScreening( struttura.isScreening() );
         strutturaEsistente.setPuntoPrelievo( struttura.isPuntoPrelievo() );
-
-        handleChildrens( struttura, strutturaEsistente );
     }
 
     @Override
@@ -305,20 +288,20 @@ public class OrgStrutturaMapperImpl implements OrgStrutturaMapper {
         else {
             strutturaEsistente.setParent( null );
         }
-        if ( strutturaEsistente.getChildrens() != null ) {
-            List<OrganigrammaStruttura> list = struttura.getChildrens();
+        if ( strutturaEsistente.getChildren() != null ) {
+            List<OrganigrammaStruttura> list = struttura.getChildren();
             if ( list != null ) {
-                strutturaEsistente.getChildrens().clear();
-                strutturaEsistente.getChildrens().addAll( list );
+                strutturaEsistente.getChildren().clear();
+                strutturaEsistente.getChildren().addAll( list );
             }
             else {
-                strutturaEsistente.setChildrens( null );
+                strutturaEsistente.setChildren( null );
             }
         }
         else {
-            List<OrganigrammaStruttura> list = struttura.getChildrens();
+            List<OrganigrammaStruttura> list = struttura.getChildren();
             if ( list != null ) {
-                strutturaEsistente.setChildrens( new ArrayList<OrganigrammaStruttura>( list ) );
+                strutturaEsistente.setChildren( new ArrayList<OrganigrammaStruttura>( list ) );
             }
         }
         if ( struttura.getStrutturaOriginale() != null ) {
@@ -432,19 +415,6 @@ public class OrgStrutturaMapperImpl implements OrgStrutturaMapper {
         dizionario.setOrdine( dizionarioDto.getOrdine() );
 
         return dizionario;
-    }
-
-    protected List<OrganigrammaStruttura> organigrammaStrutturaDtoListToOrganigrammaStrutturaList(List<OrganigrammaStrutturaDto> list) {
-        if ( list == null ) {
-            return null;
-        }
-
-        List<OrganigrammaStruttura> list1 = new ArrayList<OrganigrammaStruttura>( list.size() );
-        for ( OrganigrammaStrutturaDto organigrammaStrutturaDto : list ) {
-            list1.add( orgStrutturaDtoToEntity( organigrammaStrutturaDto ) );
-        }
-
-        return list1;
     }
 
     protected Comune comuneDtoToComune(ComuneDto comuneDto) {

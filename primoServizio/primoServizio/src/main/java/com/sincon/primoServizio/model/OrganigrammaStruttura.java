@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -59,7 +60,7 @@ public class OrganigrammaStruttura {
     private OrganigrammaStruttura parent;
 
     @OneToMany(targetEntity = OrganigrammaStruttura.class, mappedBy = "parent", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<OrganigrammaStruttura> childrens;
+    private List<OrganigrammaStruttura> children;
 
     @ManyToOne(targetEntity = OrganigrammaStruttura.class)
     @JoinColumn(name = "COD_STRUTTURA_ORIGINALE", referencedColumnName = "ID_STRUTTURA")

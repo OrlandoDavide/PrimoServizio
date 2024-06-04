@@ -14,17 +14,17 @@ public interface OrgStrutturaMapper {
     @Mapping(target = "childrens", ignore = true)
     OrganigrammaStrutturaDto orgStrutturaEntityToDto(OrganigrammaStruttura orgStruttura);
 
-    List<OrganigrammaStrutturaDto> orgStrutturaEntityToDtoList(List<OrganigrammaStrutturaDto> entities);
-
-    @AfterMapping
-    default void handleChildrens(OrganigrammaStrutturaDto entity, @MappingTarget OrganigrammaStrutturaDto dto) {
-        if (entity.getChildrens() != null) {
-            if(dto.getChildrens() != null) {
-                dto.getChildrens().clear();
-            }
-            dto.setChildrens(orgStrutturaEntityToDtoList(entity.getChildrens()));
-        }
-    }
+//    List<OrganigrammaStrutturaDto> orgStrutturaEntityToDtoList(List<OrganigrammaStrutturaDto> entities);
+//
+//    @AfterMapping
+//    default void handleChildrens(OrganigrammaStrutturaDto entity, @MappingTarget OrganigrammaStrutturaDto dto) {
+//        if (entity.getChildrens() != null) {
+//            if(dto.getChildrens() != null) {
+//                dto.getChildrens().clear();
+//            }
+//            dto.setChildrens(orgStrutturaEntityToDtoList(entity.getChildrens()));
+//        }
+//    }
 
     OrganigrammaStruttura orgStrutturaDtoToEntity(OrganigrammaStrutturaDto orgStrutturaDto);
 
